@@ -3,13 +3,13 @@ from sender import *
 import itertools
 from time import sleep
 
-test_chars = 100 # test parameter: number of characters you want to hear.
+test_chars = 1000 # test parameter: number of characters you want to hear.
 lead = 0.1 # experimental parameter: the observed time taken by garbage characters before message starts.
 lag = 0.2 # experimental parameter: the observed time by which listening lags behind hearing the message.
 
 if __name__ == "__main__":
     stream, audio = start_listening()
-    message = "Hello world!"
+    message = "hello world"
     heard = []
     for char in message[:test_chars]:
         # I feel like there might be a bug here because of synchronization: it might stop listening before I start playing.
