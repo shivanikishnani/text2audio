@@ -5,11 +5,6 @@ import numpy as np
 from scipy import signal
 from matplotlib import pyplot as plt
 from coder import *
- 
-FORMAT = pyaudio.paInt16
-CHANNELS = 1
-RATE = 44100
-CHUNK = 1024
 
 def start_listening():
     '''
