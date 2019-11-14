@@ -18,6 +18,8 @@ def play(message):
         duration += d
     return round(duration, 2)
 
+def play_alphabet():
+    play("abcdefghijklmnopqrstuvwxyz. ")
+
 if __name__ == "__main__":
-    print(play("Software-defined radio (SDR) is a radio communication system where components that have been traditionally implemented in hardware (e.g. mixers, filters, amplifiers, modulators/demodulators, detectors, etc.) are instead implemented by means of software on a personal computer or embedded system.[1] While the concept of SDR is not new, the rapidly evolving capabilities of digital electronics render practical many processes which were once only theoretically possible."))
-    
+    play_alphabet()

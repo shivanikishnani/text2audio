@@ -10,7 +10,6 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
 CHUNK = 1024
-CHARTIME = 0.05
 
 def start_listening():
     '''
@@ -39,6 +38,7 @@ def listen(listening_time=10, filename=None):
     '''
     Listen for listening_time (float) seconds and return the bit representation of the output.
     Optionally, for debugging, write it to filename.
+    Don't run this in a while loop! start_listening creates a bit of noise at the start that I can't get rid of, so call it once for each time you actually want to start listening, not just to window out small intervals at a time.
     Modified from source https://gist.github.com/mabdrabo/8678538
     '''
 
@@ -62,22 +62,32 @@ def get_frequencies(frames):
     Some code from https://pythonfundu.blogspot.com/2019/03/realtime-audio-visualization-in-python.html
     '''
     cleaned_frames = [np.frombuffer(frame, dtype=np.int16) for frame in frames]
-    frequencies = []
-    for frame in cleaned_frames:
-        psdfreqs, power = signal.periodogram(frame, fs=RATE) # should use an FFT but I don't want to deal with np.fft.fftshift rn
-        frequencies.append(psdfreqs[np.argmax(power)])
+    frame = np.hstack(cleaned_frames)
+    psdfreqs, power = signal.periodogram(frame, fs=RATE)
+    return psdfreqs[np.argmax(power)]
 
-    return frequencies
+
+def decode_frame(frame):
+    '''
+    Takes in a frame and returns its decoded character.
+    '''
+    return decode(get_frequencies(frame))
 
 def decode_framesets(framesets):
     '''
     Takes in a list of frames and returns its decoding.
     '''
     chars = []
-    for frameset in framesets:
-        chars.append(decode(np.mean(get_frequencies(frameset))))
+    for frame in framesets:
+        chars.append(decode_frame(frame))
 
     return ''.join(chars)
 
 if __name__ == "__main__":
-    decode_frames(listen(0.05))
+    opinions = []
+    stream, audio = start_listening()
+    for _ in range(200):
+        opinions.append(decode_frame(read_from_stream(stream, 0.05)))
+
+    stop_listening(stream, audio)
+    print(''.join(opinions))
