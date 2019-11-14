@@ -1,5 +1,6 @@
 import pyaudio
 import wave
+import pysine
  
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
@@ -8,7 +9,7 @@ CHUNK = 1024
  
 def record(recording_time=10, filename="file.wav"):
     '''
-    Record for 'recording_time' seconds and write it to 'filename'.
+    Record for recording_time (int) seconds and write it to filename (str).
     For debugging only.
     '''
     audio = pyaudio.PyAudio()
@@ -38,4 +39,20 @@ def record(recording_time=10, filename="file.wav"):
     waveFile.writeframes(b''.join(frames))
     waveFile.close()
 
-def 
+def encode(message):
+    '''
+    Encodes a message (str) according to a currently very primitive scheme.
+    Returns a set of tuples (freq, duration) to be passed into 'transmit'.
+    Currently all durations are 0.1 seconds even though that doesn't meet the bitrate.
+    '''
+    min_freq = 20
+    mappings = {i: round(min_freq * pow(2, i/13), 3) for i in range(128)} # ascii, step size is a semitone
+    return [(mappings[ord(c)], 0.1) for c in message]
+
+def play(message):
+    encoded = encode(message)
+    for e in encoded:
+        pysine.sine(*e)
+
+if __name__ == "__main__":
+    play("Hello world!")
