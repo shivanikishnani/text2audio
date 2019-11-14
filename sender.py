@@ -5,6 +5,7 @@ import wave
 import pysine
 import numpy as np
 from coder import *
+from demo import harmonics1
 
 def start_sending():
     '''
@@ -24,7 +25,7 @@ def play(message, stream):
     encoded = encode(message)
     duration = 0
     for f, d in encoded:
-        stream.write(np.sin(f * np.arange(0, d, 1/44100)).astype(np.float32).tostring())
+        stream.write(harmonics1(f, d).astype(np.float32).tostring())
         duration += d
     return round(duration, 2)
 
@@ -38,5 +39,5 @@ def play_alphabet(stream):
 
 if __name__ == "__main__":
     stream, audio = start_sending()
-    play('z', stream)
+    play_alphabet(stream)
     stop_sending(stream, audio)

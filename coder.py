@@ -9,8 +9,8 @@ RATE = 44100
 CHUNK = 256
 
 CHARTIME = 0.05
-min_freq = 880
-log_step = 7
+min_freq = 20
+log_step = 13
 
 def char_to_ind(char):
     if 97 <= ord(char) <= 122:

@@ -1,12 +1,10 @@
-# a py3 version of https://davywybiral.blogspot.com/2010/09/procedural-music-with-pyaudio-and-numpy.html
+# a python 3 version of https://davywybiral.blogspot.com/2010/09/procedural-music-with-pyaudio-and-numpy.html
 
 import math
 import numpy
 import pyaudio
 import itertools
 from scipy import interpolate
-from operator import itemgetter
-
 
 class Note:
 
@@ -106,29 +104,30 @@ def chord(n, scale):
 root = Note('A', 3)
 scale = Scale(root, [2, 1, 2, 2, 1, 3, 1])
 
-chunks = []
-chunks.append(chord(21, scale))
-chunks.append(chord(19, scale))
-chunks.append(chord(18, scale))
-chunks.append(chord(20, scale))
-chunks.append(chord(21, scale))
-chunks.append(chord(22, scale))
-chunks.append(chord(20, scale))
-chunks.append(chord(21, scale))
+if __name__ == "__main__":
+    chunks = []
+    chunks.append(chord(21, scale))
+    chunks.append(chord(19, scale))
+    chunks.append(chord(18, scale))
+    chunks.append(chord(20, scale))
+    chunks.append(chord(21, scale))
+    chunks.append(chord(22, scale))
+    chunks.append(chord(20, scale))
+    chunks.append(chord(21, scale))
 
-chunks.append(chord(21, scale) + pluck2(scale.get(38)))
-chunks.append(chord(19, scale) + pluck2(scale.get(37)))
-chunks.append(chord(18, scale) + pluck2(scale.get(33)))
-chunks.append(chord(20, scale) + pluck2(scale.get(32)))
-chunks.append(chord(21, scale) + pluck2(scale.get(31)))
-chunks.append(chord(22, scale) + pluck2(scale.get(32)))
-chunks.append(chord(20, scale) + pluck2(scale.get(29)))
-chunks.append(chord(21, scale) + pluck2(scale.get(28)))
+    chunks.append(chord(21, scale) + pluck2(scale.get(38)))
+    chunks.append(chord(19, scale) + pluck2(scale.get(37)))
+    chunks.append(chord(18, scale) + pluck2(scale.get(33)))
+    chunks.append(chord(20, scale) + pluck2(scale.get(32)))
+    chunks.append(chord(21, scale) + pluck2(scale.get(31)))
+    chunks.append(chord(22, scale) + pluck2(scale.get(32)))
+    chunks.append(chord(20, scale) + pluck2(scale.get(29)))
+    chunks.append(chord(21, scale) + pluck2(scale.get(28)))
 
-chunk = numpy.concatenate(chunks) * 0.25
+    chunk = numpy.concatenate(chunks) * 0.25
 
-p = pyaudio.PyAudio()
-stream = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=1)
-stream.write(chunk.astype(numpy.float32).tostring())
-stream.close()
-p.terminate()
+    p = pyaudio.PyAudio()
+    stream = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=1)
+    stream.write(chunk.astype(numpy.float32).tostring())
+    stream.close()
+    p.terminate()
