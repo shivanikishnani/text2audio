@@ -3,23 +3,40 @@
 import pyaudio
 import wave
 import pysine
+import numpy as np
 from coder import *
+
+def start_sending():
+    '''
+    Open the pyaudio stream from the sender side.
+    '''
+    audio = pyaudio.PyAudio()
+    stream = audio.open(format=FORMAT, channels=CHANNELS,
+                    rate=RATE, output=True,
+                    frames_per_buffer=CHUNK)
+    return stream, audio
  
-FORMAT = pyaudio.paInt16
-CHANNELS = 1
-RATE = 44100
-CHUNK = 1024
- 
-def play(message):
+def play(message, stream):
+    '''
+    Play the message according to a certain encoding.
+    Some inspiration from https://davywybiral.blogspot.com/2010/09/procedural-music-with-pyaudio-and-numpy.html
+    '''
     encoded = encode(message)
     duration = 0
     for f, d in encoded:
-        pysine.sine(f, d)
+        stream.write(np.sin(f * np.arange(0, d, 1/44100)).astype(np.float32).tostring())
         duration += d
     return round(duration, 2)
 
-def play_alphabet():
-    play("abcdefghijklmnopqrstuvwxyz. ")
+def stop_sending(stream, audio):
+    stream.stop_stream()
+    stream.close()
+    audio.terminate()
+
+def play_alphabet(stream):
+    return play("abcdefghijklmnopqrstuvwxyz. ", stream)
 
 if __name__ == "__main__":
-    play_alphabet()
+    stream, audio = start_sending()
+    play('z', stream)
+    stop_sending(stream, audio)

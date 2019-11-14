@@ -1,9 +1,15 @@
 # Encoding and decoding methods.
 
 import numpy as np
+import pyaudio
+ 
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 44100
+CHUNK = 256
 
-CHARTIME = 0.15
-min_freq = 440
+CHARTIME = 0.05
+min_freq = 880
 log_step = 7
 
 def char_to_ind(char):

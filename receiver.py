@@ -1,16 +1,10 @@
 import pyaudio
 import wave
-import pysine
 import numpy as np
 from scipy import signal
 from matplotlib import pyplot as plt
 from coder import *
  
-FORMAT = pyaudio.paInt16
-CHANNELS = 1
-RATE = 44100
-CHUNK = 1024
-
 def start_listening():
     '''
     Open the pyaudio stream.
@@ -65,7 +59,6 @@ def get_frequencies(frames):
     frame = np.hstack(cleaned_frames)
     psdfreqs, power = signal.periodogram(frame, fs=RATE)
     return psdfreqs[np.argmax(power)]
-
 
 def decode_frame(frame):
     '''
