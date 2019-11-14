@@ -7,7 +7,7 @@ from coder import *
  
 def start_listening():
     '''
-    Open the pyaudio stream.
+    Open the pyaudio stream from the listener side.
     '''
     audio = pyaudio.PyAudio()
     stream = audio.open(format=FORMAT, channels=CHANNELS,
