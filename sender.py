@@ -4,6 +4,7 @@ import pyaudio
 import wave
 import numpy as np
 from coder import *
+from time import sleep
 
 window = 3
 
@@ -18,6 +19,14 @@ def start_sending():
                     rate=RATE, output=True,
                     frames_per_buffer=CHUNK)
     return stream, audio
+
+def get_sine(f, d):
+    '''
+    Get a single sine of duration d and frequency f.
+    '''
+    times = np.linspace(0, d, int(RATE * d), endpoint=False)
+    return np.array((np.sin(times * f * 2 * np.pi) + 1.0) * 127.5, dtype=np.int8)
+    
  
 def play(message, stream):
     '''
@@ -26,9 +35,9 @@ def play(message, stream):
     '''
     encoded = encode(message)
     duration = 0
-    for f, d in encoded:
-        times = np.linspace(0, d, int(RATE * d), endpoint=False)
-        stream.write(np.array((np.sin(times * f * 2 * np.pi) + 1.0) * 127.5, dtype=np.int8).tostring())
+    for i, sineinfo in enumerate(encoded):
+        f, d = sineinfo
+        stream.write(get_sine(f, d).tostring())
         duration += d
     return round(duration, 2)
 

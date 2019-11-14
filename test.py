@@ -5,7 +5,7 @@ from time import sleep
 from scipy import stats
 
 test_chars = 1000 # test parameter: number of characters you want to hear.
-# lead = 0.2 # experimental parameter: the observed time taken by garbage characters before message starts.
+lead = 0.2 # experimental parameter: the observed time taken by garbage characters before message starts.
 lag = 0.25 # experimental parameter: the observed time by which listening lags behind hearing the message.
 show = False # if you want to show the message being sent and received in parallel
 
@@ -37,5 +37,5 @@ if __name__ == "__main__":
 
     stop_listening(listen_stream, listen_audio)
     stop_sending(send_stream, send_audio)
-    print(''.join(received))
+    print(''.join(received)[1:])
     
