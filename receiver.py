@@ -67,7 +67,8 @@ def get_frequencies(frames):
     Takes in frames, gets their PSD, and returns the corresponding frequencies to be decoded by coder.decode.
     '''
     freqs, power = get_psd(frames)
-    inds = signal.find_peaks(power, height=0.1*max(power))[0]
+    inds = signal.find_peaks(power, height=0.1 * max(power))[0]
+    print(inds)
     for i in inds:
         # try and find close to a 1-2-4 group
         for candidate in [2 * i - 1, 2 * i, 2 * i + 1, 4 * i - 1, 4 * i, 4 * i + 1]:
@@ -95,12 +96,7 @@ def decode_framesets(framesets):
 if __name__ == "__main__":
     opinions = []
     listen_stream, listen_audio = start_listening()
-    send_stream, send_audio = start_sending()
-    for _ in range(5):
-        play('c', send_stream)
-        frames = read_from_stream(listen_stream, 0.1)
-        f, p = get_psd(frames)
-        plt.plot(f[:100], p[:100])
-        plt.show()
+    for _ in range(50):
+        opinions.append(decode_frame(read_from_stream(listen_stream, CHARTIME)))
     stop_listening(listen_stream, listen_audio)
-    stop_sending(send_stream, send_audio)
+    print(''.join(opinions))
