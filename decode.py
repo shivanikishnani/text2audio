@@ -11,7 +11,7 @@ def process_sound_from_stream(sound, WINDOWING=True):
     global bit_blocks_received
     global unprocessed_bits
     bit_blocks_received += sound_to_bits(sound)
-    if(not WINDOWING):
+    if(WINDOWING):
         if(len(bit_blocks_received) >= 3):
             block1 = bit_blocks_received[-3]
             block2 = bit_blocks_received[-2]
