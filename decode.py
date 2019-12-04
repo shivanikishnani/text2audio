@@ -5,9 +5,18 @@ SMALL_BLOCK_SIZE = 5
 
 
 #process_sound_from_stream is the only function that should be used by other files
-#every other function is a helper for process_sound_from_stream
+#every other function is just a helper for process_sound_from_stream
+
 #takes in a sound and prints out the message translated so far
-def process_sound_from_stream(sound, WINDOWING=True):
+
+#this function is intended to be called in a loop each time a sound is received
+
+#The input sound_to_bits should be a function that takes in a sound and returns the bits encoded
+#in the sound. "sound" here refers to the sound data received during the predetermined time window.
+#With WINDOWING=True, the assumption is that the number of encoded bits is equal to
+#SMALL_BLOCK_SIZE * 3. With WINDOWING=False, sound_to_bits can return any number of bits.
+
+def process_sound_from_stream(sound, sound_to_bits, WINDOWING=True):
     global bit_blocks_received
     global unprocessed_bits
     bit_blocks_received += sound_to_bits(sound)
@@ -26,7 +35,6 @@ def process_sound_from_stream(sound, WINDOWING=True):
     print(message_so_far)
 
 
-
 #takes the first five unprocessed bits, translates them, removes them from unprocessed_bits
 #and adds the translated letter to the end of the message so far
 def process_five():
@@ -38,12 +46,6 @@ def process_five():
 
     message_so_far += five_to_letter(first_five)
     unprocessed_bits = rest
-
-
-#takes sounds and turns it into one big block
-def sound_to_bits(sound):
-    #TODO
-    return None
 
 
 #takes in five bits and returns corresponding letter
