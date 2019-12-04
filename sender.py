@@ -7,6 +7,7 @@ from coder import *
 from time import sleep
 from matplotlib import pyplot as plt
 from scipy import signal
+from receiver import *
 
 window = 3
 
@@ -79,8 +80,19 @@ def play_alphabet(stream):
     return play("abcdefghijklmnopqrstuvwxyz. ", stream)
 
 if __name__ == "__main__":
-    '''for char in "c":
-        show_expected_psd(char)'''
-    stream, audio = start_sending()
-    play("hello world", stream)
-    stop_sending(stream, audio)
+    send_stream, send_audio = start_sending()
+    listen_stream, listen_audio = start_listening()
+    freqs = np.concatenate((np.arange(100, 400, 5), np.arange(420, 1000, 5)))
+    d = 1
+    to_send = sum([sine(f, d) for f in freqs])
+    send_stream.write(to_send.astype(np.float32).tostring())
+    heard = read_from_stream(listen_stream, d)
+    # send_stream.write(to_send.astype(np.float32).tostring())
+    f, power = get_psd(heard)
+    plt.plot(f[np.where(f < 2000)], power[np.where(f < 2000)])
+    for i in range(len(power)):
+        if power[i] >= 0.25 * max(power):
+            print(f[i])
+    stop_sending(send_stream, send_audio)
+    stop_listening(listen_stream, listen_audio)
+    plt.show()

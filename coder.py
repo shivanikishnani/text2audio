@@ -6,8 +6,8 @@ import pyaudio
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
-RATE = 44100
-CHUNK = 1024
+RATE = 40000
+CHUNK = 1000
 
 CHARTIME = 0.05
 min_freq = 220
@@ -59,3 +59,5 @@ def decode(f):
     Takes in a frequency and returns the best (MAP/MLE eventually?) guess of what the corresponding character is.
     '''
     return ind_to_char(int(round(np.log2(f / min_freq) * log_step)))
+
+ 
