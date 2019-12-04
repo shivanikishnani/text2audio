@@ -7,20 +7,24 @@ SMALL_BLOCK_SIZE = 5
 #process_sound_from_stream is the only function that should be used by other files
 #every other function is a helper for process_sound_from_stream
 #takes in a sound and prints out the message translated so far
-def process_sound_from_stream(sound):
+def process_sound_from_stream(sound, WINDOWING=True):
     global bit_blocks_received
     global unprocessed_bits
     bit_blocks_received += sound_to_bits(sound)
-    if(len(bit_blocks_received) >= 3):
-        block1 = bit_blocks_received[-3]
-        block2 = bit_blocks_received[-2]
-        block3 = bit_blocks_received[-1]
-        unprocessed_bits += three_blocks_to_one(block1, block2, block3)
+    if(not WINDOWING):
+        if(len(bit_blocks_received) >= 3):
+            block1 = bit_blocks_received[-3]
+            block2 = bit_blocks_received[-2]
+            block3 = bit_blocks_received[-1]
+            unprocessed_bits += three_blocks_to_one(block1, block2, block3)
+    else:
+        unprocessed_bits += bit_blocks_received[-1]
     
     while(len(unprocessed_bits) >= 5):
         process_five()
 
     print(message_so_far)
+
 
 
 #takes the first five unprocessed bits, translates them, removes them from unprocessed_bits
@@ -75,14 +79,15 @@ def three_blocks_to_one(block1, block2, block3):
     
     return new_small_block
 
+
 #test1:
-a = "aaaaabbbbb01101"
-b = "aaaaa01101bbbbb"
-c = "01101aaaaabbbbb"
-print(three_blocks_to_one(a,b,c))
+# a = "aaaaabbbbb01101"
+# b = "aaaaa01101bbbbb"
+# c = "01101aaaaabbbbb"
+# print(three_blocks_to_one(a,b,c))
 
 #expected_output:
-#should print 01101 no matter how much you modify any one of the three strings.
+# should print "01101" no matter how much you modify any one of the three strings.
 
 
 #test2:
@@ -91,6 +96,6 @@ print(three_blocks_to_one(a,b,c))
 # print(message_so_far)
 # print(unprocessed_bits)
 
-#expected_putput:
-#should print the translation of 11010 aka z
-#then should print remaining unprocessed bits: "baaaaaaaaaaaaaaaaaaaaaaa"
+#expected_output:
+# should print the translation of 11010 aka 'z'
+# then should print remaining unprocessed bits: "baaaaaaaaaaaaaaaaaaaaaaa"
