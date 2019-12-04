@@ -3,6 +3,7 @@ from sender import *
 import itertools
 from time import sleep
 from scipy import stats
+from matplotlib import pyplot as plt
 
 test_chars = 1000 # test parameter: number of characters you want to hear.
 lead = 0.2 # experimental parameter: the observed time taken by garbage characters before message starts.
@@ -12,7 +13,7 @@ show = False # if you want to show the message being sent and received in parall
 if __name__ == "__main__":
     listen_stream, listen_audio = start_listening()
     send_stream, send_audio = start_sending()
-    message = "the five boxing wizards jump quickly."
+    message = "hello world."
     received = []
 
     for _ in range(int(lead / CHARTIME)):
@@ -38,4 +39,5 @@ if __name__ == "__main__":
     stop_listening(listen_stream, listen_audio)
     stop_sending(send_stream, send_audio)
     print(''.join(received)[1:])
+    plt.show()
     

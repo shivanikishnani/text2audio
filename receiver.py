@@ -4,6 +4,7 @@ import numpy as np
 from scipy import signal
 from matplotlib import pyplot as plt
 from coder import *
+from sender import play, start_sending, stop_sending
 
 def start_listening():
     '''
@@ -50,15 +51,30 @@ def listen(listening_time=10, filename=None):
 
     return frames
 
-def get_frequencies(frames):
+
+def get_psd(frames):
     '''
     Takes in frames from listen, and converts them back to the frequencies identified.
     Some code from https://pythonfundu.blogspot.com/2019/03/realtime-audio-visualization-in-python.html
     '''
     cleaned_frames = [np.frombuffer(frame, dtype=np.int16) for frame in frames]
     frame = np.hstack(cleaned_frames)
-    psdfreqs, power = signal.periodogram(frame, fs=RATE)
-    return psdfreqs[np.argmax(power)]
+    freqs, power = signal.periodogram(frame, fs=RATE)
+    return freqs, power
+
+def get_frequencies(frames):
+    '''
+    Takes in frames, gets their PSD, and returns the corresponding frequencies to be decoded by coder.decode.
+    '''
+    freqs, power = get_psd(frames)
+    inds = signal.find_peaks(power, height=0.1*max(power))[0]
+    for i in inds:
+        # try and find close to a 1-2-4 group
+        for candidate in [2 * i - 1, 2 * i, 2 * i + 1, 4 * i - 1, 4 * i, 4 * i + 1]:
+            if candidate in inds:
+                return freqs[i]
+                
+    return min(inds)
 
 def decode_frame(frame):
     '''
@@ -78,9 +94,13 @@ def decode_framesets(framesets):
 
 if __name__ == "__main__":
     opinions = []
-    stream, audio = start_listening()
-    for _ in range(50):
-        opinions.append(decode_frame(read_from_stream(stream, 0.15)))
-
-    stop_listening(stream, audio)
-    print(''.join(opinions))
+    listen_stream, listen_audio = start_listening()
+    send_stream, send_audio = start_sending()
+    for _ in range(5):
+        play('c', send_stream)
+        frames = read_from_stream(listen_stream, 0.1)
+        f, p = get_psd(frames)
+        plt.plot(f[:100], p[:100])
+        plt.show()
+    stop_listening(listen_stream, listen_audio)
+    stop_sending(send_stream, send_audio)
