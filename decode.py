@@ -44,8 +44,12 @@ def sound_to_bits(sound):
 
 #takes in five bits and returns corresponding letter
 def five_to_letter(bits):
-    #TODO
-    return None
+    n = int(bin, 2)
+    if(n == 28):
+        return "."
+    if(n == 27):
+        return " "
+    return chr(n + 96)
 
 
 #takes in three big blocks and returns one small block they all share
