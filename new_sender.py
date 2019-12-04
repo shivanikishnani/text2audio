@@ -65,10 +65,12 @@ def new_get_message_to_play(message):
     encoded = new_encode(message)
     chunks = []
     # might have obog right here
-    for i in range(len(encoded) - WINDOW + 1):
+    i = 0
+    while i < len(encoded):
         triples = [TRIPLES[j] for j in range(i, i + WINDOW) if encoded[j]]
         powers = [POWERS[j] for j in range(i, i + WINDOW) if encoded[j]]
         chunks.append(get_chunk_for_triples(triples, powers, CHARTIME))
+        i += SHIFT
 
     return np.concatenate(chunks)
 
