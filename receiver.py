@@ -79,8 +79,8 @@ def decode_framesets(framesets):
 if __name__ == "__main__":
     opinions = []
     stream, audio = start_listening()
-    for _ in range(200):
-        opinions.append(decode_frame(read_from_stream(stream, 0.05)))
+    for _ in range(50):
+        opinions.append(decode_frame(read_from_stream(stream, 0.15)))
 
     stop_listening(stream, audio)
     print(''.join(opinions))

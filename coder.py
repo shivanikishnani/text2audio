@@ -9,9 +9,9 @@ CHANNELS = 1
 RATE = 44100
 CHUNK = 1024
 
-CHARTIME = 0.1
+CHARTIME = 0.05
 min_freq = 220
-log_step = 10
+log_step = 7
 
 def char_to_ind(char):
     if 97 <= ord(char) <= 122:

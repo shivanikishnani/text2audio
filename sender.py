@@ -5,6 +5,7 @@ import wave
 import numpy as np
 from coder import *
 from time import sleep
+from matplotlib import pyplot as plt
 
 window = 3
 
@@ -25,7 +26,7 @@ def get_sine(f, d):
     Get a single sine of duration d and frequency f.
     '''
     times = np.linspace(0, d, int(RATE * d), endpoint=False)
-    return np.array((np.sin(times * f * 2 * np.pi) + 1.0) * 127.5, dtype=np.int8)
+    return np.array((np.sin(times * f * 2 * np.pi) + 1.0) * 127.5)
     
 def get_mixed_sine(freqs, d):
     '''
@@ -36,7 +37,7 @@ def get_mixed_sine(freqs, d):
     for f in freqs:
         toreturn += np.sin(times * f * 2 * np.pi)
 
-    return np.array((toreturn + 1.0) * 127.5, dtype=np.int8)
+    return np.array((toreturn + 1.0) * 127.5)
 
 def play(message, stream, window=False):
     '''
@@ -48,9 +49,9 @@ def play(message, stream, window=False):
     last_f, next_f = 0, 0
     for i in range(len(encoded)):
         f, d = encoded[i]
-        if window and i < len(encoded) - 1:
+        if False and i < len(encoded) - 1:
             next_f = encoded[i + 1][0]
-        if window and i > 0:
+        if False and i > 0:
             last_f = encoded[i - 1][0]
         stream.write(get_mixed_sine([last_f, f, next_f], d).tostring())
         duration += d
