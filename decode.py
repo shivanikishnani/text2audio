@@ -1,7 +1,7 @@
 message_so_far = ""
 bit_blocks_received = []
 unprocessed_bits = ""
-SMALL_BLOCK_SIZE = 15
+SMALL_BLOCK_SIZE = 5
 
 
 #process_sound_from_stream is the only function that should be used by other files
@@ -44,7 +44,7 @@ def sound_to_bits(sound):
 
 #takes in five bits and returns corresponding letter
 def five_to_letter(bits):
-    n = int(bin, 2)
+    n = int(bits, 2)
     if(n == 28):
         return "."
     if(n == 27):
@@ -75,4 +75,22 @@ def three_blocks_to_one(block1, block2, block3):
     
     return new_small_block
 
+#test1:
+a = "aaaaabbbbb01101"
+b = "aaaaa01101bbbbb"
+c = "01101aaaaabbbbb"
+print(three_blocks_to_one(a,b,c))
 
+#expected_output:
+#should print 01101 no matter how much you modify any one of the three strings.
+
+
+#test2:
+# unprocessed_bits = "11010baaaaaaaaaaaaaaaaaaaaaaa"
+# process_five()
+# print(message_so_far)
+# print(unprocessed_bits)
+
+#expected_putput:
+#should print the translation of 11010 aka z
+#then should print remaining unprocessed bits: "baaaaaaaaaaaaaaaaaaaaaaa"
