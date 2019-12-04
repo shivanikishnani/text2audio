@@ -27,17 +27,32 @@ def get_sine(f, d):
     times = np.linspace(0, d, int(RATE * d), endpoint=False)
     return np.array((np.sin(times * f * 2 * np.pi) + 1.0) * 127.5, dtype=np.int8)
     
- 
-def play(message, stream):
+def get_mixed_sine(freqs, d):
+    '''
+    Get a mixed sine wave with an arbitrary number of frequencies.
+    '''
+    times = np.linspace(0, d, int(RATE * d), endpoint=False)
+    toreturn = np.zeros(times.size,)
+    for f in freqs:
+        toreturn += np.sin(times * f * 2 * np.pi)
+
+    return np.array((toreturn + 1.0) * 127.5, dtype=np.int8)
+
+def play(message, stream, window=False):
     '''
     Play the message according to a certain encoding.
     Some inspiration from https://davywybiral.blogspot.com/2010/09/procedural-music-with-pyaudio-and-numpy.html
     '''
     encoded = encode(message)
     duration = 0
-    for i, sineinfo in enumerate(encoded):
-        f, d = sineinfo
-        stream.write(get_sine(f, d).tostring())
+    last_f, next_f = 0, 0
+    for i in range(len(encoded)):
+        f, d = encoded[i]
+        if window and i < len(encoded) - 1:
+            next_f = encoded[i + 1][0]
+        if window and i > 0:
+            last_f = encoded[i - 1][0]
+        stream.write(get_mixed_sine([last_f, f, next_f], d).tostring())
         duration += d
     return round(duration, 2)
 

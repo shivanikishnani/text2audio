@@ -9,7 +9,7 @@ CHANNELS = 1
 RATE = 44100
 CHUNK = 1024
 
-CHARTIME = 0.15
+CHARTIME = 0.1
 min_freq = 220
 log_step = 10
 
@@ -28,7 +28,7 @@ def ind_to_char(ind):
         return chr(46)
     return chr(32)
 
-mappings = {ind_to_char(i): round(min_freq * pow(2, i / log_step), 3) for i in range(28)}
+mappings = {ind_to_char(i): round(min_freq * pow(2, i / log_step), 7) for i in range(28)}
 
 def clean(message):
     '''
