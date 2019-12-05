@@ -7,8 +7,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 lowest = 50
-highest = 1000
-step = 50
+highest = 2000
+step = 100
 d = 0.1
 
 def calibrate():
@@ -35,17 +35,21 @@ def calibrate():
     np.save('./scaling_' + str(lowest) + '_' + str(highest) + '_' + str(step) + '.npy', scales)
 
 if __name__ == "__main__":
-    scales = np.load('./scaling_' + str(lowest) + '_' + str(highest) + '_' + str(step) + '.npy')
+    try:
+        scales = np.load('./scaling_' + str(lowest) + '_' + str(highest) + '_' + str(step) + '.npy')
+    except FileNotFoundError:
+        calibrate()
+        scales = np.load('./scaling_' + str(lowest) + '_' + str(highest) + '_' + str(step) + '.npy')
     send_stream, send_audio = start_sending()
     listen_stream, listen_audio = start_listening()
     all_freqs = np.arange(lowest, highest + step, step)
-    freqs1 = [50, 100] # np.arange(lowest, highest + step, step * 2)
-    freqs2 = [50, 100, 700]
+    freqs1 = all_freqs[:2] # np.arange(lowest, highest + step, step * 2)
+    freqs2 = all_freqs[:5]
     d = 0.1
 
     for freqs in [freqs1, freqs2]:
         to_send = sum([sine(f, d) * scales[np.where(all_freqs == f)] ** 1 for f in freqs])
-        heard = read_from_stream(listen_stream, d)
+        
         send_stream.write(to_send.astype(np.float32).tostring())
         heard = read_from_stream(listen_stream, d)
         f, p = get_psd(heard)
