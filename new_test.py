@@ -1,5 +1,5 @@
 from receiver import *
-from sender import *
+from new_sender import *
 from decode import *
 import itertools
 from time import sleep
