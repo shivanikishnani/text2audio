@@ -1,6 +1,7 @@
 import pyaudio
 import wave
 import numpy as np
+from encoder import *
 from scipy import signal
 from matplotlib import pyplot as plt
 from coder import *
@@ -76,6 +77,22 @@ def get_frequencies(frames):
                 return freqs[i]
                 
     return min(inds)
+
+#if we are windowing, TRIPLES must have length divisible by 3
+def decode_sound(sound_data):
+    freqs = sound_data[0]
+    powers = sound_data[1]
+    bits = [nth_bit(n, freqs, powers) for n in range(len(TRIPLES))]
+    return "".join(bits)
+
+def nth_bit(n, freqs, powers):
+    threshold = "idk lol"
+    bit = '1'
+    for freq in TRIPLES[n]:
+        ind = freqs.index(freq)
+        if(powers[ind] < threshold):
+            bit = '0'
+    return bit
 
 def decode_frame(frame):
     '''

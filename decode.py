@@ -11,15 +11,15 @@ SMALL_BLOCK_SIZE = 5
 
 #this function is intended to be called in a loop each time a sound is received
 
-#The input sound_to_bits should be a function that takes in a sound and returns the bits encoded
-#in the sound. "sound" here refers to the sound data received during the predetermined time window.
+#The input sound_to_bits should be a function that takes in sound_data and returns the bits encoded
+#in the sound. "sound_data" here refers to the sound data received during the predetermined time window.
 #With WINDOWING=True, the assumption is that the number of encoded bits is equal to
 #SMALL_BLOCK_SIZE * 3. With WINDOWING=False, sound_to_bits can return any number of bits.
 
-def process_sound_from_stream(sound, sound_to_bits, WINDOWING=True):
+def process_sound_from_stream(sound_data, sound_to_bits, WINDOWING=True):
     global bit_blocks_received
     global unprocessed_bits
-    bit_blocks_received += sound_to_bits(sound)
+    bit_blocks_received += sound_to_bits(sound_data)
     if(WINDOWING):
         if(len(bit_blocks_received) >= 3):
             block1 = bit_blocks_received[-3]
@@ -52,10 +52,14 @@ def process_five():
 def five_to_letter(bits):
     n = int(bits, 2)
     if(n == 28):
-        return "."
+        return '.'
     if(n == 27):
-        return " "
-    return chr(n + 96)
+        return ' '
+    char = chr(n + 96)
+    if(char in "abcdefghijklmnopqrstuvwxyz"):
+        return char
+    else:
+        return '#'
 
 
 #takes in three big blocks and returns one small block they all share
