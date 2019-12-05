@@ -7,17 +7,13 @@ from coder import *
 from time import sleep
 from matplotlib import pyplot as plt
 from scipy import signal
+from utils import * 
+from copy import deepcopy
 
 window = 3
-
-def start_sending():
-    '''
-    Open the pyaudio stream from the sender side.
-    I essentially took this and play from https://github.com/lneuhaus/pysine/blob/master/pysine/pysine.py
-    '''
-    audio = pyaudio.PyAudio()
-    stream = audio.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=1)
-    return stream, audio
+lowest = 50
+highest = 1000
+step = 50
 
 def sine(frequency, length):
   length = int(length * RATE)
@@ -70,17 +66,6 @@ def show_expected_psd(char):
     plt.title("Character: " + char)
     plt.show()
 
-def stop_sending(stream, audio):
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
-
 def play_alphabet(stream):
     return play("abcdefghijklmnopqrstuvwxyz. ", stream)
-
-if __name__ == "__main__":
-    '''for char in "c":
-        show_expected_psd(char)'''
-    stream, audio = start_sending()
-    play("hello world", stream)
-    stop_sending(stream, audio)
+    

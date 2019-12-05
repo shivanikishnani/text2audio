@@ -1,13 +1,4 @@
 # Encoding and decoding methods.
-# Also a collection for dependencies. Probably not a good design idea.
-
-import numpy as np
-import pyaudio
-
-FORMAT = pyaudio.paInt16
-CHANNELS = 1
-RATE = 44100
-CHUNK = 1024
 
 CHARTIME = 0.05
 min_freq = 220
@@ -49,7 +40,7 @@ def clean(message):
 def encode(message, charlength=CHARTIME):
     '''
     Encodes a message (str) according to a currently very primitive scheme.
-    Returns a set of tuples (freq, duration) to be passed into 'transmit'.
+    Returns a list of tuples (freq, duration) to be passed into 'transmit'.
     Currently all durations are 0.1 seconds even though that doesn't meet the bitrate.
     '''
     return [(mappings[c], charlength) for c in clean(message)]
@@ -59,3 +50,5 @@ def decode(f):
     Takes in a frequency and returns the best (MAP/MLE eventually?) guess of what the corresponding character is.
     '''
     return ind_to_char(int(round(np.log2(f / min_freq) * log_step)))
+
+ 

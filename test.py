@@ -22,6 +22,7 @@ if __name__ == "__main__":
     for char in message[:test_chars]:
         # I feel like there might be a bug here because of synchronization: it might stop listening before I start playing.
         # Won't be an issue when actually running things, though.
+        print(char)
         play(char, send_stream)
         heard = read_from_stream(listen_stream, CHARTIME)
         char_received = decode_frame(heard)
