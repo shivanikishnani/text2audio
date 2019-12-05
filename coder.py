@@ -1,13 +1,4 @@
 # Encoding and decoding methods.
-# Also a collection for dependencies. Probably not a good design idea.
-
-import numpy as np
-import pyaudio
-
-FORMAT = pyaudio.paInt16
-CHANNELS = 1
-RATE = 44100
-CHUNK = 1000
 
 CHARTIME = 0.05
 min_freq = 220

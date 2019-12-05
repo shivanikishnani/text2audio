@@ -7,18 +7,13 @@ from coder import *
 from time import sleep
 from matplotlib import pyplot as plt
 from scipy import signal
-from receiver import *
+from utils import * 
+from copy import deepcopy
 
 window = 3
-
-def start_sending():
-    '''
-    Open the pyaudio stream from the sender side.
-    I essentially took this and play from https://github.com/lneuhaus/pysine/blob/master/pysine/pysine.py
-    '''
-    audio = pyaudio.PyAudio()
-    stream = audio.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=1)
-    return stream, audio
+lowest = 50
+highest = 1000
+step = 50
 
 def sine(frequency, length):
   length = int(length * RATE)
@@ -71,47 +66,6 @@ def show_expected_psd(char):
     plt.title("Character: " + char)
     plt.show()
 
-def stop_sending(stream, audio):
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
-
 def play_alphabet(stream):
     return play("abcdefghijklmnopqrstuvwxyz. ", stream)
-
-if __name__ == "__main__":
-    ears_bleed = False
-    send_stream, send_audio = start_sending()
-    listen_stream, listen_audio = start_listening()
-    freqs = np.arange(50, 200, 50)
-    d = 0.1
-    if ears_bleed:
-        freqs_sweep, power_sweep = get_psd(read_from_stream(listen_stream, d))
-        power_sweep *= 0
-        for f in freqs:
-            to_send = sine(f, d)
-            send_stream.write(to_send.astype(np.float32).tostring())
-            heard = read_from_stream(listen_stream, d)
-            power_sweep += get_psd(heard)[1]
-
-    to_send = sum([sine(f, d) for f in freqs])
-    print(to_send)
-    plt.plot(np.linspace(0, 1, len(to_send)), to_send)
-    plt.show()
-    send_stream.write(to_send.astype(np.float32).tostring())
-    heard = read_from_stream(listen_stream, d)
-    send_stream.write(to_send.astype(np.float32).tostring())
     
-    freqs_simple, power_simple = get_psd(heard)
-    plt.semilogy(freqs_simple[freqs_simple > 0], power_simple[freqs_simple > 0], label="Simple")
-    if ears_bleed:
-        plt.semilogy(freqs_sweep[freqs_sweep > 0], power_sweep[freqs_sweep > 0], label="Sweep")
-    plt.xlabel("Frequency (Hz)")
-    plt.ylabel("Power (unknown units)")
-    plt.legend()
-    '''for i in range(len(power)):
-        if power[i] >= 0.25 * max(power):
-            print(f[i])'''
-    stop_sending(send_stream, send_audio)
-    stop_listening(listen_stream, listen_audio)
-    plt.show()

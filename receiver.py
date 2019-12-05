@@ -4,17 +4,7 @@ import numpy as np
 from scipy import signal
 from matplotlib import pyplot as plt
 from coder import *
-from sender import play, start_sending, stop_sending
-
-def start_listening():
-    '''
-    Open the pyaudio stream from the listener side.
-    '''
-    audio = pyaudio.PyAudio()
-    stream = audio.open(format=FORMAT, channels=CHANNELS,
-                    rate=RATE, input=True,
-                    frames_per_buffer=CHUNK)
-    return stream, audio
+from utils import *
 
 def read_from_stream(stream, time):
     frames = []
@@ -23,11 +13,6 @@ def read_from_stream(stream, time):
         frames.append(data)
 
     return frames
-
-def stop_listening(stream, audio):
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
 
 def listen(listening_time=10, filename=None):
     '''
