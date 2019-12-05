@@ -83,6 +83,7 @@ def three_blocks_to_one(block1, block2, block3):
 
 
 #test1:
+#(make sure to set SMALL_BLOCK_SIZE=5 before running this test)
 # a = "aaaaabbbbb01101"
 # b = "aaaaa01101bbbbb"
 # c = "01101aaaaabbbbb"
