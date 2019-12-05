@@ -59,8 +59,8 @@ def get_psd(frames):
     '''
     cleaned_frames = [np.frombuffer(frame, dtype=np.int16) for frame in frames]
     frame = np.hstack(cleaned_frames)
-    freqs, power = signal.periodogram(frame, fs=RATE)
-    return freqs, power
+    freqs, power = np.fft.fftfreq(frame.shape[-1], d=1/RATE), np.abs(np.fft.fft(frame)) ** 2
+    return np.fft.fftshift(freqs), np.fft.fftshift(power)
 
 def get_frequencies(frames):
     '''

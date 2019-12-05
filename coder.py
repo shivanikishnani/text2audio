@@ -6,7 +6,7 @@ import pyaudio
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
-RATE = 40000
+RATE = 44100
 CHUNK = 1000
 
 CHARTIME = 0.05
@@ -49,7 +49,7 @@ def clean(message):
 def encode(message, charlength=CHARTIME):
     '''
     Encodes a message (str) according to a currently very primitive scheme.
-    Returns a set of tuples (freq, duration) to be passed into 'transmit'.
+    Returns a list of tuples (freq, duration) to be passed into 'transmit'.
     Currently all durations are 0.1 seconds even though that doesn't meet the bitrate.
     '''
     return [(mappings[c], charlength) for c in clean(message)]

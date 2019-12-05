@@ -80,19 +80,38 @@ def play_alphabet(stream):
     return play("abcdefghijklmnopqrstuvwxyz. ", stream)
 
 if __name__ == "__main__":
+    ears_bleed = False
     send_stream, send_audio = start_sending()
     listen_stream, listen_audio = start_listening()
-    freqs = np.concatenate((np.arange(100, 400, 5), np.arange(420, 1000, 5)))
-    d = 1
+    freqs = np.arange(50, 200, 50)
+    d = 0.1
+    if ears_bleed:
+        freqs_sweep, power_sweep = get_psd(read_from_stream(listen_stream, d))
+        power_sweep *= 0
+        for f in freqs:
+            to_send = sine(f, d)
+            send_stream.write(to_send.astype(np.float32).tostring())
+            heard = read_from_stream(listen_stream, d)
+            power_sweep += get_psd(heard)[1]
+
     to_send = sum([sine(f, d) for f in freqs])
+    print(to_send)
+    plt.plot(np.linspace(0, 1, len(to_send)), to_send)
+    plt.show()
     send_stream.write(to_send.astype(np.float32).tostring())
     heard = read_from_stream(listen_stream, d)
-    # send_stream.write(to_send.astype(np.float32).tostring())
-    f, power = get_psd(heard)
-    plt.plot(f[np.where(f < 2000)], power[np.where(f < 2000)])
-    for i in range(len(power)):
+    send_stream.write(to_send.astype(np.float32).tostring())
+    
+    freqs_simple, power_simple = get_psd(heard)
+    plt.semilogy(freqs_simple[freqs_simple > 0], power_simple[freqs_simple > 0], label="Simple")
+    if ears_bleed:
+        plt.semilogy(freqs_sweep[freqs_sweep > 0], power_sweep[freqs_sweep > 0], label="Sweep")
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Power (unknown units)")
+    plt.legend()
+    '''for i in range(len(power)):
         if power[i] >= 0.25 * max(power):
-            print(f[i])
+            print(f[i])'''
     stop_sending(send_stream, send_audio)
     stop_listening(listen_stream, listen_audio)
     plt.show()
