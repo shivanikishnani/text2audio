@@ -6,6 +6,11 @@ CHANNELS = 1
 RATE = 40000
 CHUNK = 1000
 
+lowest = 200
+highest = 800
+step = 20
+d = 0.3
+
 def start_sending():
     '''
     Open the pyaudio stream from the sender side.

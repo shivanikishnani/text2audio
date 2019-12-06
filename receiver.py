@@ -104,8 +104,28 @@ def decode_framesets(framesets):
     return ''.join(chars)
 
 if __name__ == "__main__":
+    d = 0.1
+    listen_time = 10
     listen_stream, listen_audio = start_listening()
-    frames = read_from_stream(listen_stream, 20)
+    ambient_time = read_from_stream(listen_stream, d)
+    ambient_freqs, ambient_power = get_psd(ambient_time)
+    frames = read_from_stream(listen_stream, listen_time)
     stop_listening(listen_stream, listen_audio)
-    plt.plot(frames)
+    
+    num_frames = int(listen_time / d)
+    k = len(frames) // num_frames
+
+    heard_list = []
+    for i in range(num_frames):
+        heard_list.append(frames[k * i: k * (i + 1)])
+
+    plt.plot(get_waveform(frames))
     plt.show()
+
+    for i in range(min(num_frames, 5)):
+        f, p = get_psd(heard_list[i])
+        middle = (highest - lowest) / 2 + lowest
+        spread = middle - lowest
+        inds = np.where(np.abs(f - middle) < spread)
+        plt.semilogy(f[inds], p[inds] - ambient_power[inds], label=str(i))
+        plt.show()
