@@ -2,6 +2,7 @@ message_so_far = ""
 bit_blocks_received = []
 unprocessed_bits = ""
 SMALL_BLOCK_SIZE = 5
+import math
 
 #both receiver and sender should agree on F and k beforehand
 #F is the total number of possible frequencies
