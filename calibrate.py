@@ -43,7 +43,7 @@ if __name__ == "__main__":
     send_stream, send_audio = start_sending()
     listen_stream, listen_audio = start_listening()
     all_freqs = np.arange(lowest, highest + step, step)
-    freqsets_to_test = [[all_freqs[i + k] for i in [0, 1, 3, 4]] for k in list(range(10, 15)) * 10]
+    freqsets_to_test = [[all_freqs[i + k] for i in [0, 1, 3, 4]] for k in list(range(10, 15)) * 2]
 
     colors = ['k']
 

@@ -123,7 +123,7 @@ def get_windowed_psd(waveform, d=0.1):
 
 if __name__ == "__main__":
     d = 0.1
-    listen_time = 0.1
+    listen_time = 20
     listen_stream, listen_audio = start_listening()
     ambient_time = read_from_stream(listen_stream, d)
     ambient_freqs, ambient_power = get_psd(ambient_time)
@@ -139,13 +139,4 @@ if __name__ == "__main__":
 
     plt.plot(get_waveform(frames))
     plt.show()
-
-    # np.save('./fifty_frame_waveform_data.npy', get_waveform(frames))
-
-    '''for i in range(min(num_frames, 5)):
-        f, p = get_psd(heard_list[i])
-        middle = (highest - lowest) / 2 + lowest
-        spread = middle - lowest
-        inds = np.where(np.abs(f - middle) < spread)
-        plt.semilogy(f[inds], p[inds] - ambient_power[inds], label=str(i))
-        plt.show()'''
+    np.save('./fifty_frame_today.npy', get_waveform(frames))

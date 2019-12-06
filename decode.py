@@ -2,7 +2,37 @@ message_so_far = ""
 bit_blocks_received = []
 unprocessed_bits = ""
 SMALL_BLOCK_SIZE = 5
+import math
 
+#both receiver and sender should agree on F and k beforehand
+#F is the total number of possible frequencies
+#k is the number of frequencies we are sending
+#permutation_into_num takes in an array of peaks loc_array and returns an integer
+#num_into_permutation takes in an integer n and returns an array of peaks
+
+def permutation_into_num(loc_array, F):
+    total = 0
+    for i in range(len(loc_array)):
+        total += choose(F - loc_array[i] - 1, len(loc_array) - i)
+    return total
+
+def num_into_permutation(n, F, k):
+    return num_into_permutation_helper(n + 1, F, k)
+
+def num_into_permutation_helper(n, F, k):
+    i = k
+    if(k == 0):
+        return []
+    while(n > choose(i, k)):
+        i+=1
+    base_amount = choose(i - 1, k)
+    return [F - i] + [x + (F - i + 1) for x in num_into_permutation_helper(n - base_amount, i - 1, k - 1)]
+
+def choose(n, r):
+    if(r > n):
+        return 0
+    fact = math.factorial
+    return (fact(n))/(fact(r)*fact(n - r))
 
 #process_sound_from_stream is the only function that should be used by other files
 #every other function is just a helper for process_sound_from_stream
