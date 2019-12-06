@@ -28,7 +28,6 @@ if __name__ == "__main__":
         sound_data = (freqs, powers)
         process_sound_from_stream(sound_data, decode_sound)
 
-
     for _ in range(int(lag / CHARTIME)):
         freqs, powers = get_psd(read_from_stream(listen_stream, CHARTIME))
         sound_data = (freqs, powers)

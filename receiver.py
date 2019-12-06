@@ -71,6 +71,7 @@ def decode_sound(sound_data):
     return "".join(bits)
 
 def nth_bit(n, freqs, powers):
+    freqs = list(freqs)
     threshold = "idk lol"
     bit = '1'
     for freq in TRIPLES[n]:
