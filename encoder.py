@@ -85,7 +85,8 @@ def new_encode(message):
     return lst
 
 def decode(f):
-    '''
+    ''' 
     Takes in a frequency and returns the best (MAP/MLE eventually?) guess of what the corresponding character is.
     '''
     return ind_to_char(int(round(np.log2(f / min_freq) * log_step)))
+
