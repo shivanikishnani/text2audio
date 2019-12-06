@@ -5,6 +5,7 @@ import pdb
 import doctest
 from utils import *
 from scipy.special import comb
+from matplotlib import pyplot as plt
 
 """
 letter messages (str) -> (str2str) windowed messages ->  (str2str) bits -> 
@@ -113,13 +114,22 @@ def encode_peaks(message):
     window_bits = "".join([char_to_bin(c) for c in window_message])
     #divide it into chunks
     chunk_bits = [window_bits[i:i+message_size] for i in range(0, len(window_bits), message_size)]
-    print(chunk_bits)
- 
-def band_sine(f, spread):
-    freqs = np.arange(f - spread, f + spread)
-    return sum([sine(freq, d)[1000:] for freq in freqs])
+    return chunk_bits
 
-def get_frequencies()
+def get_sound_to_play(chunk):
+	'''
+	Takes in a chunk from chunk_bits, and returns the sound to play.
+	'''
+	sound = np.zeros(int(RATE * d),)
+	for i, bit in enumerate(chunk):
+		if bit == '1':
+			f = lowest + step * i
+			sound[pop:] += band_sine(f, step / 2)[pop:]
+
+	return sound
 
 if __name__ == "__main__":
-	encode_peaks("hello world")
+	chunks = encode_peaks("abc")
+	for chunk in chunks:
+		plt.plot(get_sound_to_play(chunk))
+		plt.show()

@@ -10,11 +10,6 @@ from scipy import signal
 from utils import * 
 from copy import deepcopy
 
-def sine(frequency, length):
-  length = int(length * RATE)
-  factor = float(frequency) * (np.pi * 2) / RATE
-  return np.sin(np.arange(length) * factor)
-
 def harmonics1(freq, length):
   a = sine(freq * 1.00, length)
   b = sine(freq * 2.00, length)
