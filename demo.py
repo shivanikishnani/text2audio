@@ -133,11 +133,4 @@ def song():
   p.terminate()
 
 if __name__ == "__main__":
-  p = pyaudio.PyAudio()
-  stream = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=1)
-  f = 440.0
-  d = 1
-  # h = harmonics1(440, 1) + harmonics1(660, 1) + harmonics1(880, 1)
-  stream.write(harmonics1(f, d).astype(numpy.float32).tostring())
-  stream.close()
-  p.terminate()
+  song()

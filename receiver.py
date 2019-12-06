@@ -37,14 +37,21 @@ def listen(listening_time=10, filename=None):
 
     return frames
 
+def get_waveform(frames):
+    '''
+    Takes in frames from listen, and returns the time-domain data observed.
+    '''
+    cleaned_frames = [np.frombuffer(frame, dtype=np.int16) for frame in frames]
+    frame = np.hstack(cleaned_frames)
+    return frame
+
 
 def get_psd(frames):
     '''
     Takes in frames from listen, and converts them back to the frequencies identified.
     Some code from https://pythonfundu.blogspot.com/2019/03/realtime-audio-visualization-in-python.html
     '''
-    cleaned_frames = [np.frombuffer(frame, dtype=np.int16) for frame in frames]
-    frame = np.hstack(cleaned_frames)
+    frame = get_waveform(frames)
     freqs, power = np.fft.fftfreq(frame.shape[-1], d=1/RATE), np.abs(np.fft.fft(frame)) ** 2
     return np.fft.fftshift(freqs), np.fft.fftshift(power)
 
@@ -97,9 +104,8 @@ def decode_framesets(framesets):
     return ''.join(chars)
 
 if __name__ == "__main__":
-    opinions = []
     listen_stream, listen_audio = start_listening()
-    for _ in range(50):
-        opinions.append(decode_frame(read_from_stream(listen_stream, CHARTIME)))
+    frames = read_from_stream(listen_stream, 20)
     stop_listening(listen_stream, listen_audio)
-    print(''.join(opinions))
+    plt.plot(frames)
+    plt.show()

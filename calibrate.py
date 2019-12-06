@@ -9,11 +9,11 @@ from matplotlib import pyplot as plt
 lowest = 200
 highest = 800
 step = 20
-d = 0.2
+d = 0.3
 
 def band_sine(f, spread):
     freqs = np.arange(f - spread, f + spread)
-    return sum([sine(freq, d) for freq in freqs])
+    return sum([sine(freq, d)[1000:] for freq in freqs])
 
 def calibrate(d=0.5):
     send_stream, send_audio = start_sending()
@@ -48,19 +48,33 @@ if __name__ == "__main__":
     send_stream, send_audio = start_sending()
     listen_stream, listen_audio = start_listening()
     all_freqs = np.arange(lowest, highest + step, step)
-    freqsets_to_test = [[all_freqs[i + k] for i in [0, 1, 3, 4]] for k in range(5, 10)]
+    freqsets_to_test = [[all_freqs[i + k] for i in [0, 1, 3, 4]] for k in list(range(10, 15)) * 10]
 
     colors = ['k']
 
-    for i, freqs in enumerate(freqsets_to_test):
-        # to_send = sum([band_sine(f, step / 2) for f in freqs])
-        combined_message = np.concatenate((sum([band_sine(f, step / 2) for f in freqs])))
+    ambient_time = read_from_stream(listen_stream, 10 * d)
+    ambient_freqs, ambient_power = get_psd(ambient_time)
 
-        ambient_time = read_from_stream(listen_stream, d)
-        ambient_freqs, ambient_power = get_psd(ambient_time)
+    to_concatenate = list(sum([band_sine(f, step / 2) for f in freqs]) for freqs in freqsets_to_test)
+    combined_message = np.concatenate(to_concatenate)
+    
+    if True:
+        plt.plot(combined_message)
+        plt.show()
 
-        send_stream.write(to_send.astype(np.float32).tostring())
-        heard = read_from_stream(listen_stream, d)
+    send_stream.write(combined_message.astype(np.float32).tostring())
+    heard_total = read_from_stream(listen_stream, 50 * d)
+
+    k = int(len(heard_total) / len(freqsets_to_test))
+
+    plt.plot(get_waveform(heard_total))
+    plt.show()
+
+    heard_list = []
+    for i in range(len(freqsets_to_test)):
+        heard_list.append(heard_total[k * i: k * (i + 1)])
+
+    for i, heard in enumerate(heard_list):
         f, p = get_psd(heard)
         p -= ambient_power
         middle = (highest - lowest) / 2 + lowest
@@ -68,10 +82,10 @@ if __name__ == "__main__":
         
         plt.semilogy(f[np.abs(f - middle) < spread], p[np.abs(f - middle) < spread], label=str(i))
 
-        for f in freqs:
+        for f in freqsets_to_test[i]:
             plt.axvline(x=f, color=colors[i % len(colors)])
 
-        plt.show()
+        #plt.show()
 
     stop_sending(send_stream, send_audio)
     stop_listening(listen_stream, listen_audio)
