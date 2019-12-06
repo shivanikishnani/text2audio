@@ -15,12 +15,12 @@ min_freq = 220
 log_step = 10
 
 START = 100
-END = 1000
-INC = 30
-WINDOW = (END - START) / INC
-SHIFT = math.floor(WINDOW / 3)
+END = 2100
+INC = 50
+WINDOW = (END - START) // (INC * 3)
+SHIFT = int(math.floor(WINDOW / 3))
 
-arr = range(100, 1001, 30)
+arr = list(range(START, END + INC, INC))
 # 3 unique frequencies per index (lazy coding, could be redone)
 TRIPLES = {i: (arr[3 * i], arr[3 * i + 1], arr[3 * i + 2]) for i in range(WINDOW)}
 # for adjusting power of frequency, placeholder
