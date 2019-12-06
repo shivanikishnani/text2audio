@@ -11,18 +11,26 @@ message_size = np.log2(total_freqs / min_freq) #per time interval
 
 def window_an_array(message_list, trip_window=3, windowing=True):
 	final_list = [[0]*5] * 2
-	final_list.append([[0] * 5] * 2)
-	length = len(message_list)
-	pdb.set_trace()
+	length = len(message_list) 
+	message_list = [[0]* 5] * 2 + message_list
 	for i, char_list in enumerate(message_list):
 		if i < length - 2:
 			first = message_list[i]
 			second = message_list[i + 1]
 			third = message_list[i + 2]
-		final_list.append(first, second, third)
-		
-	final_list.append(message_list[i], final_list.message_list[i + 1])
-	final_list.append([[0] * 5] * 2)
+		else:
+			first = message_list[i]
+			second = message_list[i + 1]
+			third = [0] * 5
+		final_list.append([first, second, ])
+		final_list.append(second)
+		final_list.append(third)
+		if sum(third) == 0:
+			break
+	final_list.append([0] * 5)
+	print(final_list)
+	# final_list.append(message_list[i], final_list.message_list[i + 1])
+	return final_list
 	
 
 
@@ -37,4 +45,4 @@ def encode_peaks(message):
  
 
 if __name__ == "__main__":
-	encode_peaks("heheheh")
+	encode_peaks("abcd")

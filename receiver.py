@@ -107,5 +107,5 @@ if __name__ == "__main__":
     listen_stream, listen_audio = start_listening()
     frames = read_from_stream(listen_stream, 20)
     stop_listening(listen_stream, listen_audio)
-    plt.plot(frames)
+    plt.semilogy(*get_psd(frames))
     plt.show()
