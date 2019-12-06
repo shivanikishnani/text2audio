@@ -6,13 +6,13 @@ from receiver import *
 import numpy as np
 from matplotlib import pyplot as plt
 
-lowest = 100
-highest = 2100
-step = 30
-d = 0.3
+lowest = 200
+highest = 800
+step = 20
+d = 0.2
 
 def band_sine(f, spread):
-    freqs = np.arange(f - spread, f + spread, 5)
+    freqs = np.arange(f - spread, f + spread)
     return sum([sine(freq, d) for freq in freqs])
 
 def calibrate(d=0.5):
@@ -48,12 +48,13 @@ if __name__ == "__main__":
     send_stream, send_audio = start_sending()
     listen_stream, listen_audio = start_listening()
     all_freqs = np.arange(lowest, highest + step, step)
-    freqsets_to_test = [all_freqs[:5]]
+    freqsets_to_test = [[all_freqs[i + k] for i in [0, 1, 3, 4]] for k in range(5, 10)]
 
     colors = ['k']
 
     for i, freqs in enumerate(freqsets_to_test):
-        to_send = sum([band_sine(f, 10) for f in freqs])
+        # to_send = sum([band_sine(f, step / 2) for f in freqs])
+        combined_message = np.concatenate((sum([band_sine(f, step / 2) for f in freqs])))
 
         ambient_time = read_from_stream(listen_stream, d)
         ambient_freqs, ambient_power = get_psd(ambient_time)
@@ -62,15 +63,15 @@ if __name__ == "__main__":
         heard = read_from_stream(listen_stream, d)
         f, p = get_psd(heard)
         p -= ambient_power
-        middle = (highest + step - lowest) / 2
-        spread = middle + step - lowest # I think
+        middle = (highest - lowest) / 2 + lowest
+        spread = middle - lowest
+        
         plt.semilogy(f[np.abs(f - middle) < spread], p[np.abs(f - middle) < spread], label=str(i))
 
         for f in freqs:
             plt.axvline(x=f, color=colors[i % len(colors)])
 
         plt.show()
-        sleep(0.5)
 
     stop_sending(send_stream, send_audio)
     stop_listening(listen_stream, listen_audio)
