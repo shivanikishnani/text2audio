@@ -103,9 +103,27 @@ def decode_framesets(framesets):
 
     return ''.join(chars)
 
+def get_windowed_psd(waveform, d=0.1):
+    if isinstance(waveform, str):
+        waveform = np.load(waveform)
+
+    heard_list = []
+    num_windows = int((len(waveform) / RATE) / d)
+    k = len(waveform) // num_windows
+
+    for i in range(num_windows):
+        heard_list.append(waveform[k * i: k * (i + 1)])
+
+    psds = []
+    for i, heard in enumerate(heard_list):
+        f, p = get_psd(heard)
+        psds.append(p)
+    
+    return f, psds
+
 if __name__ == "__main__":
     d = 0.1
-    listen_time = 10
+    listen_time = 0.1
     listen_stream, listen_audio = start_listening()
     ambient_time = read_from_stream(listen_stream, d)
     ambient_freqs, ambient_power = get_psd(ambient_time)
@@ -122,7 +140,7 @@ if __name__ == "__main__":
     plt.plot(get_waveform(frames))
     plt.show()
 
-    np.save('./fifty_frame_waveform_data.npy', get_waveform(frames))
+    # np.save('./fifty_frame_waveform_data.npy', get_waveform(frames))
 
     '''for i in range(min(num_frames, 5)):
         f, p = get_psd(heard_list[i])
