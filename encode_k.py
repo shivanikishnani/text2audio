@@ -10,10 +10,10 @@ letter messages (str) -> (str2str) windowed messages ->  (str2str) bits ->
 (str2listofstr_) message_size chunks of bits
  -> (str_2array) an array of peaks locations corresponding to each chunk
 """ 
-total_freqs = 0
-k_peaks = 0
-time_interval = 0
-message_size = np.log2(comb(total_freqs, k_peaks)) 
+total_freqs = 30
+k_peaks = 6
+time_interval = 0.2 
+message_size = np.floor(np.log2(comb(total_freqs, k_peaks)))
 
 
 
@@ -106,6 +106,7 @@ def clean(message):
 
     return ''.join(cleaned_message)
 
+
 def encode_peaks(message):
     '''
     Cleans the message, convert characters to bits, 
@@ -116,8 +117,13 @@ def encode_peaks(message):
     window_bits = "".join([char_to_bin(c) for c in window_message])
     #divide it into chunks
     chunk_bits = [window_bits[i:i+message_size] for i in range(0, len(window_bits), message_size)]
-    print(chunk_bits)
+    # peak_array = np.zeros((total_freqs,1))
+    # peak_array[2] = 1
+    # peak_array[3] = 1
+    # peak_array[5] = 1
+    # peak_array[6]
+
  
 
 if __name__ == "__main__":
-	encode_peaks("abcd")
+	encode_peaks("Hello Peaks")
