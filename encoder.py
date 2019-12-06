@@ -36,7 +36,8 @@ def char_to_ind(char):
         return 27
 
 def char_to_bin(char):
-    lst = [int(c) for c in np.binary_repr(char_to_ind(char) + 1)]
+    print(np.binary_repr(char_to_ind(char) + 1))
+    lst = [str(c) for c in np.binary_repr(char_to_ind(char) + 1)]
     while len(lst) < 5:
         lst.insert(0, 0)
     return lst

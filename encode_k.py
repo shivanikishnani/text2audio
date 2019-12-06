@@ -11,15 +11,13 @@ letter messages (str) -> (str2str) windowed messages ->  (str2str) bits ->
 (str2listofstr_) message_size chunks of bits
  -> (str_2array) an array of peaks locations corresponding to each chunk
 """ 
-<<<<<<< HEAD
-total_freqs = 30
-k_peaks = 6
-time_interval = 0.2 
-message_size = np.floor(np.log2(comb(total_freqs, k_peaks)))
-=======
+
+# total_freqs = 30
+# k_peaks = 6
+# time_interval = 0.2 
 
 message_size = int(np.log2(comb(total_freqs, k_peaks)))
->>>>>>> 72030d71c58ecef914038d1dc099b5fff86988c7
+
 
 def window_an_array(message_list, trip_window=3, windowing=True):
 	final_list = [[0]*5] * 2
@@ -80,12 +78,11 @@ def char_to_ind(char):
         return 27
 
 def char_to_bin(char):
-    lst = [str(int(c)) for c in np.binary_repr(char_to_ind(char) + 1)]
-    while len(lst) < 5:
-        lst.extend(str(0))
-    bin_str = ""
-    bin_str = bin_str.join(lst)
-    return bin_str
+	lst = str(np.binary_repr(char_to_ind(char) + 1))
+	num_zero = "0" * (5 - len(lst))
+	lst = num_zero + lst
+
+	return lst
 
 def ind_to_char(ind):
     if 0 <= ind < 26:
@@ -117,10 +114,13 @@ def encode_peaks(message):
     onvert message to bits 
     find floor fo log_2 (k)
     '''
-    window_message = window_str(clean(message))
+    window_message = window_str(clean(message), windowing=False)
     window_bits = "".join([char_to_bin(c) for c in window_message])
     #divide it into chunks
+    print(window_bits)
     chunk_bits = [window_bits[i:i+message_size] for i in range(0, len(window_bits), message_size)]
+    print(chunk_bits)
+    print(message_size)
     # peak_array = np.zeros((total_freqs,1))
     # peak_array[2] = 1
     # peak_array[3] = 1
@@ -132,11 +132,9 @@ def band_sine(f, spread):
     freqs = np.arange(f - spread, f + spread)
     return sum([sine(freq, d)[1000:] for freq in freqs])
 
-def get_frequencies()
+def get_frequencies():
+	pass
 
 if __name__ == "__main__":
-<<<<<<< HEAD
-	encode_peaks("Hello Peaks")
-=======
-	encode_peaks("hello world")
->>>>>>> 72030d71c58ecef914038d1dc099b5fff86988c7
+	encode_peaks("abc")
+
