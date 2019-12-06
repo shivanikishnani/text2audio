@@ -3,7 +3,7 @@ import pyaudio
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
-RATE = 40000
+RATE = 44100
 CHUNK = 1000
 
 lowest = 200
