@@ -122,10 +122,12 @@ if __name__ == "__main__":
     plt.plot(get_waveform(frames))
     plt.show()
 
-    for i in range(min(num_frames, 5)):
+    np.save('./fifty_frame_waveform_data.npy', get_waveform(frames))
+
+    '''for i in range(min(num_frames, 5)):
         f, p = get_psd(heard_list[i])
         middle = (highest - lowest) / 2 + lowest
         spread = middle - lowest
         inds = np.where(np.abs(f - middle) < spread)
         plt.semilogy(f[inds], p[inds] - ambient_power[inds], label=str(i))
-        plt.show()
+        plt.show()'''
