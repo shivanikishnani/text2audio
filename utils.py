@@ -11,6 +11,10 @@ highest = 2000
 step = 20
 d = 0.2
 
+total_freqs = 33
+k_peaks = 6
+time_interval = 0.1
+
 def start_sending():
     '''
     Open the pyaudio stream from the sender side.
