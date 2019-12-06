@@ -5,17 +5,7 @@ from encoder import *
 from scipy import signal
 from matplotlib import pyplot as plt
 from coder import *
-from sender import play, start_sending, stop_sending
-
-def start_listening():
-    '''
-    Open the pyaudio stream from the listener side.
-    '''
-    audio = pyaudio.PyAudio()
-    stream = audio.open(format=FORMAT, channels=CHANNELS,
-                    rate=RATE, input=True,
-                    frames_per_buffer=CHUNK)
-    return stream, audio
+from utils import *
 
 def read_from_stream(stream, time):
     frames = []
@@ -24,11 +14,6 @@ def read_from_stream(stream, time):
         frames.append(data)
 
     return frames
-
-def stop_listening(stream, audio):
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
 
 def listen(listening_time=10, filename=None):
     '''
@@ -60,8 +45,8 @@ def get_psd(frames):
     '''
     cleaned_frames = [np.frombuffer(frame, dtype=np.int16) for frame in frames]
     frame = np.hstack(cleaned_frames)
-    freqs, power = signal.periodogram(frame, fs=RATE)
-    return freqs, power
+    freqs, power = np.fft.fftfreq(frame.shape[-1], d=1/RATE), np.abs(np.fft.fft(frame)) ** 2
+    return np.fft.fftshift(freqs), np.fft.fftshift(power)
 
 def get_frequencies(frames):
     '''
