@@ -15,8 +15,6 @@ k_peaks = 0
 time_interval = 0
 message_size = np.log2(comb(total_freqs, k_peaks)) 
 
-
-
 def window_an_array(message_list, trip_window=3, windowing=True):
 	final_list = [[0]*5] * 2
 	length = len(message_list) 

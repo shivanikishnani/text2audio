@@ -10,11 +10,6 @@ from scipy import signal
 from utils import * 
 from copy import deepcopy
 
-window = 3
-lowest = 50
-highest = 1000
-step = 50
-
 def sine(frequency, length):
   length = int(length * RATE)
   factor = float(frequency) * (np.pi * 2) / RATE

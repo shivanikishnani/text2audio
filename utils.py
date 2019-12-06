@@ -7,9 +7,9 @@ RATE = 44100
 CHUNK = 1000
 
 lowest = 200
-highest = 800
+highest = 2000
 step = 20
-d = 0.3
+d = 0.2
 
 def start_sending():
     '''
