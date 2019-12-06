@@ -6,11 +6,6 @@ from receiver import *
 import numpy as np
 from matplotlib import pyplot as plt
 
-lowest = 200
-highest = 800
-step = 20
-d = 0.3
-
 def band_sine(f, spread):
     freqs = np.arange(f - spread, f + spread)
     return sum([sine(freq, d)[1000:] for freq in freqs])
