@@ -6,40 +6,7 @@ from receiver import *
 import numpy as np
 from matplotlib import pyplot as plt
 
-def band_sine(f, spread):
-    freqs = np.arange(f - spread, f + spread)
-    return sum([sine(freq, d)[1000:] for freq in freqs])
-
-def calibrate(d=0.5):
-    send_stream, send_audio = start_sending()
-    listen_stream, listen_audio = start_listening()
-    num_tests = 5
-
-    freqs = np.arange(lowest, highest + step, step)
-    scales = np.zeros(freqs.shape)
-
-    for _ in range(num_tests):
-        to_send = sum([sine(f, d) for f in freqs])
-        send_stream.write(to_send.astype(np.float32).tostring())
-        heard = read_from_stream(listen_stream, d)
-        freqs_x, powers = get_psd(heard)
-        inds = np.where(freqs_x > 0)
-        freqs_x = freqs_x[inds]
-        powers = powers[inds]
-
-        for i in range(len(freqs)):
-            window = np.where(np.abs(freqs_x - freqs[i]) <= step / 2)
-            avg_power = np.mean(powers[window])
-            scales[i] += max(powers) / avg_power
-
-    np.save('./scaling_' + str(lowest) + '_' + str(highest) + '_' + str(step) + '.npy', scales / num_tests)
-
 if __name__ == "__main__":
-    try:
-        scales = np.load('./scaling_' + str(lowest) + '_' + str(highest) + '_' + str(step) + '.npy')
-    except FileNotFoundError:
-        calibrate()
-        scales = np.load('./scaling_' + str(lowest) + '_' + str(highest) + '_' + str(step) + '.npy')
     send_stream, send_audio = start_sending()
     listen_stream, listen_audio = start_listening()
     all_freqs = np.arange(lowest, highest + step, step)

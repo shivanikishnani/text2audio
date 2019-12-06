@@ -3,6 +3,7 @@ import pyaudio
 import math
 import pdb
 import doctest
+from utils import *
 from scipy.special import comb
 
 """
@@ -10,10 +11,15 @@ letter messages (str) -> (str2str) windowed messages ->  (str2str) bits ->
 (str2listofstr_) message_size chunks of bits
  -> (str_2array) an array of peaks locations corresponding to each chunk
 """ 
+<<<<<<< HEAD
 total_freqs = 30
 k_peaks = 6
 time_interval = 0.2 
 message_size = np.floor(np.log2(comb(total_freqs, k_peaks)))
+=======
+
+message_size = int(np.log2(comb(total_freqs, k_peaks)))
+>>>>>>> 72030d71c58ecef914038d1dc099b5fff86988c7
 
 def window_an_array(message_list, trip_window=3, windowing=True):
 	final_list = [[0]*5] * 2
@@ -122,6 +128,15 @@ def encode_peaks(message):
     # peak_array[6]
 
  
+def band_sine(f, spread):
+    freqs = np.arange(f - spread, f + spread)
+    return sum([sine(freq, d)[1000:] for freq in freqs])
+
+def get_frequencies()
 
 if __name__ == "__main__":
+<<<<<<< HEAD
 	encode_peaks("Hello Peaks")
+=======
+	encode_peaks("hello world")
+>>>>>>> 72030d71c58ecef914038d1dc099b5fff86988c7
