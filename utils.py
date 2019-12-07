@@ -1,19 +1,22 @@
 import numpy as np
 import pyaudio
+from scipy.special import comb
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
 CHUNK = 1000
+pop = 1000 # number of timesteps to reject initially to avoid pops
 
 lowest = 200
-highest = 2000
+highest = 900
 step = 20
 d = 0.2
 
 total_freqs = 33
-k_peaks = 6
+k_peaks = 4
 time_interval = 0.1
+message_size = int(np.log2(comb(total_freqs, k_peaks)))
 
 def start_sending():
     '''
@@ -43,3 +46,12 @@ def stop_listening(stream, audio):
     stream.stop_stream()
     stream.close()
     audio.terminate()
+
+def sine(frequency, length):
+  length = int(length * RATE)
+  factor = float(frequency) * (np.pi * 2) / RATE
+  return np.sin(np.arange(length) * factor)
+
+def band_sine(f, spread):
+    freqs = np.arange(f - spread, f + spread)
+    return sum([sine(freq, d) for freq in freqs])

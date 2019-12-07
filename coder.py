@@ -1,8 +1,8 @@
 # Encoding and decoding methods.
 
-CHARTIME = 0.05
-min_freq = 220
-log_step = 10
+CHARTIME = 0.2
+min_freq = 100
+step = 50
 
 def char_to_ind(char):
     if 97 <= ord(char) <= 122:
@@ -19,7 +19,7 @@ def ind_to_char(ind):
         return chr(46)
     return chr(32)
 
-mappings = {ind_to_char(i): round(min_freq * pow(2, i / log_step), 7) for i in range(28)}
+mappings = {ind_to_char(i): min_freq + i * step for i in range(28)}
 
 def clean(message):
     '''
@@ -49,6 +49,6 @@ def decode(f):
     '''
     Takes in a frequency and returns the best (MAP/MLE eventually?) guess of what the corresponding character is.
     '''
-    return ind_to_char(int(round(np.log2(f / min_freq) * log_step)))
+    return ind_to_char(int(f - min_freq)//step)
 
  
