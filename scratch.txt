@@ -1,0 +1,29 @@
+def clean(message):
+	'''
+	Takes in a message and cleans it so that it only has a-z, spaces, and periods.
+	I feel like there's a more efficient implementation of this.
+	'''
+	cleaned_message = []
+	for c in message:
+		if c.isalpha():
+			cleaned_message.append(c.lower())
+		elif not c.isalpha() and c != '.':
+			cleaned_message.append(' ')
+		else:
+			cleaned_message.append('.')
+
+	return ''.join(cleaned_message)
+
+
+def play_file(stream):
+    file = open("input.txt", "r")
+    lines = file.readlines()
+    print(lines)
+    concated = ''.join([clean(line) for line in lines])
+    print(concated)
+    play(concated, stream)
+
+def output_func(str):
+    file = open("output.txt", "w")
+    file.write(str)
+    file.close()
