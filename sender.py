@@ -25,9 +25,14 @@ def get_sine(f, d):
     Get a single sine of duration d and frequency f.
     '''
     times = np.linspace(0, d, int(RATE * d), endpoint=False)
+    print("send   ", f)
     return np.array((np.sin(times * f * 2 * np.pi) + 1.0) * 127.5, dtype=np.int8)
+
+def get_wavepacket(f, d, spread):
+    times = np.linspace(0, d, int(RATE * d), endpoint=False)
+    packet = np.array(sum([np.sin(times * f * 2 * np.pi) for freq in [f - spread, f, f + spread]]) + 1.0 * 127.5, dtype=np.int8)
+    return packet[1000:]
     
- 
 def play(message, stream):
     '''
     Play the message according to a certain encoding.

@@ -28,7 +28,7 @@ def stop_listening(stream, audio):
     stream.close()
     audio.terminate()
 
-def listen(listening_time=10, filename=None):
+def listen(listening_time=10):
     '''
     Listen for listening_time (float) seconds and return the bit representation of the output.
     Optionally, for debugging, write it to filename.
@@ -39,32 +39,30 @@ def listen(listening_time=10, filename=None):
     stream, audio = start_listening()
     frames = read_from_stream(stream, listening_time)
     stop_listening(stream, audio)
-    
-    if filename is not None:
-        waveFile = wave.open(filename, 'wb')
-        waveFile.setnchannels(CHANNELS)
-        waveFile.setsampwidth(audio.get_sample_size(FORMAT))
-        waveFile.setframerate(RATE)
-        waveFile.writeframes(b''.join(frames))
-        waveFile.close()
 
     return frames
 
-def get_frequencies(frames):
+def clean_frame(frames):
+    cleaned_frames = [np.frombuffer(frame, dtype=np.int16) for frame in frames]
+    frame = np.hstack(cleaned_frames)
+    return frame
+
+def get_frequencies(frames, ambient_power):
     '''
     Takes in frames from listen, and converts them back to the frequencies identified.
     Some code from https://pythonfundu.blogspot.com/2019/03/realtime-audio-visualization-in-python.html
     '''
-    cleaned_frames = [np.frombuffer(frame, dtype=np.int16) for frame in frames]
-    frame = np.hstack(cleaned_frames)
+    frame = clean_frame(frames)
     psdfreqs, power = signal.periodogram(frame, fs=RATE)
+    power -= ambient_power
+    plt.semilogy(psdfreqs, power)
     return psdfreqs[np.argmax(power)]
 
-def decode_frame(frame):
+def decode_frame(frame, ambient_power):
     '''
     Takes in a frame and returns its decoded character.
     '''
-    return decode(get_frequencies(frame))
+    return decode(get_frequencies(frame, ambient_power))
 
 def decode_framesets(framesets):
     '''
@@ -78,9 +76,12 @@ def decode_framesets(framesets):
 
 if __name__ == "__main__":
     opinions = []
-    stream, audio = start_listening()
-    for _ in range(200):
-        opinions.append(decode_frame(read_from_stream(stream, 0.05)))
+    listen_stream, listen_audio = start_listening()
+    ambient = read_from_stream(listen_stream, CHARTIME)
+    ambient_decoded = [np.frombuffer(frame, dtype=np.int16) for frame in ambient]
+    _, ambient_power = signal.periodogram(np.hstack((ambient_decoded)), fs=RATE)
+    for _ in range(20):
+        opinions.append(decode_frame(read_from_stream(listen_stream, CHARTIME), ambient_power))
 
-    stop_listening(stream, audio)
+    stop_listening(listen_stream, listen_audio)
     print(''.join(opinions))
