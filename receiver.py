@@ -99,13 +99,15 @@ def listen_and_decode(listen_time):
     f, psds = get_windowed_psd(frames)
     middle = (lowest + highest) / 2
     spread = middle - lowest
-    for p in psds:
-        p -= ambient_power
-        plt.semilogy(f[np.abs(f - middle) <= spread], p[np.abs(f - middle) <= spread])
-        plt.show()
 
-    p = p[np.abs(f - middle) <= spread]
-
+    ambient_power = ambient_power[np.abs(f - middle) <= spread]
+    
+    for i, p in enumerate(psds):
+        psds[i] = p[np.abs(f - middle) <= spread]
+        psds[i] -= ambient_power
+        plt.semilogy(f[np.abs(f - middle) <= spread], psds[i])
+        
+    f = f[np.abs(f - middle) <= spread]
     full_bit_msg = ''.join([decode(p) for p in psds])
     full_str_msg = convert_to_str(full_bit_msg)
     return full_str_msg
