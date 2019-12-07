@@ -69,8 +69,6 @@ def get_windowed_psd(waveform):
 
     f_desired = np.fft.fftfreq(int(RATE * d), d = 1 / RATE)
     f_desired = f_desired[np.abs(f_desired - middle) <= spread]
-    
-    print(max(np.diff(f)), max(np.diff(f_desired)))
 
     return f, psds
 

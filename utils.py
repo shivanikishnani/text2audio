@@ -18,6 +18,7 @@ spread = middle - lowest
 
 total_freqs = 33
 k_peaks = 4
+modality = 2 # number of peaks actually seen on the PSD per peak sent
 
 message_size = int(np.log2(comb(total_freqs, k_peaks)))
 
@@ -56,5 +57,5 @@ def sine(frequency, length):
   return np.sin(np.arange(length) * factor)
 
 def band_sine(f, spread):
-    freqs = np.arange(f - spread, f + spread)
+    freqs = np.linspace(f - spread, f + spread, num=modality, endpoint=True)
     return sum([sine(freq, d) for freq in freqs])
