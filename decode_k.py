@@ -16,15 +16,20 @@ def get_peaks(psd_array):
 	num_peaks = 2 * k_peaks
 	max_psd = 0.25 * max(psd_array)
 	distance = step // 5
-	ind_peaks_in_psd, _ = find_peaks(psd_array, distance=step//5, height=max_psd) #indices
+	ind_peaks_in_psd, _ = find_peaks(psd_array, distance=distance, height=max_psd) #indices
 	ind_peaks_in_psd = np.sort(ind_peaks_in_psd)[::-1]
 	
 	ind_peaks_in_psd = ind_peaks_in_psd[0:num_peaks]
 	length = len(ind_peaks_in_psd)
 
 	while (length < num_peaks):
-		ind_peaks_in_psd, _ = find_peaks(psd_array, distance=step//5, height=max_psd) #indices
-		
+		max_psd = max_psd * 0.99
+		ind_peaks_in_psd, _ = find_peaks(psd_array, height=max_psd) #indices
+		ind_peaks_in_psd = np.sort(ind_peaks_in_psd)[::-1]
+		ind_peaks_in_psd = ind_peaks_in_psd[0:num_peaks]
+		length = len(ind_peaks_in_psd)
+		print(ind_peaks_in_psd)
+
 	print(ind_peaks_in_psd)
 	# if len(ind_peaks_in_psd) == 6:
 	# 	ind_peaks_in_psd = 
@@ -61,10 +66,10 @@ def test_get_peaks():
 		peak_powers = np.sort(p[find_peaks(p)[0]])[::-1]
 
 	# print("ACTUAL PSD ARRAY:", p)
-	get_peaks(p)
-		# print([f[np.where(p == peak_powers[i])][0] for i in range(4)])
-		# plt.semilogy(f, p)
-		# plt.show()
+	# get_peaks(p)
+		print([f[np.where(p == peak_powers[i])][0] for i in range(4)])
+		plt.semilogy(f, p)
+		plt.show()
 
 def permutation_into_num(loc_array):
 	loc_array = np.sort(loc_array, axis=-1)
