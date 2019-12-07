@@ -104,6 +104,8 @@ def listen_and_decode(listen_time):
         plt.semilogy(f[np.abs(f - middle) <= spread], p[np.abs(f - middle) <= spread])
         plt.show()
 
+    p = p[np.abs(f - middle) <= spread]
+
     full_bit_msg = ''.join([decode(p) for p in psds])
     full_str_msg = convert_to_str(full_bit_msg)
     return full_str_msg
