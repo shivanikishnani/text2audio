@@ -135,7 +135,6 @@ def convert_bitstr_to_num(str):
 	
 	return num
 
-
 def choose(n, r):
 	if(r > n):
 		return 0
@@ -146,7 +145,7 @@ def choose(n, r):
 def encode_peaks(message):
 	'''
 	Cleans the message, convert characters to bits, 
-	onvert message to bits 
+	Convert message to bits 
 	find floor fo log_2 (k)
 	'''
 
@@ -178,6 +177,7 @@ def get_sound_to_play(chunk):
 	sound = np.zeros(int(RATE * d),)
 	for peak in chunk:
 		f = lowest + step * peak
+		print(peak)
 		sound[pop:] += band_sine(f, step / 2)[pop:]
 
 	return sound

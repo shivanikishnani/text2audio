@@ -32,21 +32,6 @@ def get_psd(frames):
     freqs, power = np.fft.fftfreq(frame.shape[-1], d=1/RATE), np.abs(np.fft.fft(frame)) ** 2
     return np.fft.fftshift(freqs), np.fft.fftshift(power)
 
-def get_frequencies(frames):
-    '''
-    Takes in frames, gets their PSD, and returns the corresponding frequencies to be decoded by coder.decode.
-    '''
-    freqs, power = get_psd(frames)
-    inds = signal.find_peaks(power, height=0.1 * max(power))[0]
-    print(inds)
-    for i in inds:
-        # try and find close to a 1-2-4 group
-        for candidate in [2 * i - 1, 2 * i, 2 * i + 1, 4 * i - 1, 4 * i, 4 * i + 1]:
-            if candidate in inds:
-                return freqs[i]
-                
-    return min(inds)
-
 #if we are windowing, TRIPLES must have length divisible by 3
 def decode_sound(sound_data):
     freqs = sound_data[0]

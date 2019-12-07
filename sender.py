@@ -4,11 +4,13 @@ import pyaudio
 import wave
 import numpy as np
 from encode_k import *
+from decode_k import *
 from time import sleep
 from matplotlib import pyplot as plt
 from scipy import signal
 from utils import * 
 from copy import deepcopy
+from scipy.signal import find_peaks
 
 def harmonics1(freq, length):
   a = sine(freq * 1.00, length)
@@ -38,21 +40,31 @@ def play(message, stream, window=False):
     chunk = get_message_to_play(message, window)
     stream.write(chunk.astype(np.float32).tostring())
 
-def show_expected_psd(char):
+def show_expected_psds(message, threshold=5):
     '''
-    Takes in a character and plots the PSD we expect to get from hearing it.
+    Takes in a message and plots the first 'threshold' PSDs we expect to get from hearing it.
     '''
-    f = mappings[char]
-    chunk = get_chunk_for_freqs([0, f, 0], CHARTIME)
-    f, p = signal.periodogram(chunk, fs=RATE)
-    plt.plot(f[:100], p[:100])
-    plt.title("Character: " + char)
-    plt.show()
+    permuted_chunks = encode_peaks(message)
+    sounds = []
+    for chunk in permuted_chunks:
+        sounds.append(get_sound_to_play(chunk))
+
+    for i in range(min(threshold, len(sounds))):
+        freqs, power = np.fft.fftfreq(sounds[i].shape[-1], d=1/RATE), np.abs(np.fft.fft(sounds[i])) ** 2
+        f, p = np.fft.fftshift(freqs), np.fft.fftshift(power)
+        p = p[np.abs(f - middle) <= spread]
+        f = f[np.abs(f - middle) <= spread]
+        peak_powers = np.sort(p[find_peaks(p)[0]])[::-1]
+        print([f[np.where(p == peak_powers[i])][0] for i in range(4)])
+        plt.semilogy(f, p)
+        plt.show()
+        
 
 def play_alphabet(stream):
-    return play("abcdefghijklmnopqrstuvwxyz. ", stream)
+    return play("abcdefghijklmnopqrstuvwxyz. " * 3, stream)
 
 if __name__ == "__main__":
     stream, audio = start_sending()
     play_alphabet(stream)
     stop_sending(stream, audio)    
+    # show_expected_psds('abc')
