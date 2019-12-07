@@ -179,7 +179,7 @@ def decode(psd_array):
 	decode psd_array for 1 time step thing at a time
 	return bitstr is always of length message_size
 	"""
-	peaks = [peak + 0 for peak in get_peaks(psd_array)]
+	peaks = [peak - noise_cutoff for peak in get_peaks(psd_array)]
 	negative = [p < 0 for p in peaks]
 	if any(negative):
 		return ''

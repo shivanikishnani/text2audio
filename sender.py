@@ -51,7 +51,7 @@ def show_expected_psds(message, threshold=5):
         
 
 def play_alphabet(stream):
-    return play("abc" * 40, stream)
+    return play("abc" * 10, stream)
 
 if __name__ == "__main__":
     stream, audio = start_sending()

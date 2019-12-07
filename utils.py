@@ -8,17 +8,19 @@ RATE = 40000
 CHUNK = 1000
 pop = 0 # number of timesteps to reject initially to avoid pops
 
+noise_cutoff = 0
+total_freqs = 33 - noise_cutoff
+
+k_peaks = 4
+modality = 3 # number of peaks actually seen on the PSD per peak sent
+
 lowest = 200
-highest = 1950
 step = 50
+highest = lowest + step * (total_freqs - 1)
 d = 0.1
 
 middle = (lowest + highest) / 2
 spread = middle - lowest
-
-total_freqs = 33
-k_peaks = 4
-modality = 3 # number of peaks actually seen on the PSD per peak sent
 
 message_size = int(np.log2(comb(total_freqs, k_peaks)))
 

@@ -163,7 +163,7 @@ def encode_peaks(message):
 	chunk_nums = [convert_bitstr_to_num(chunk) for chunk in chunk_bits]
 	print('chunk_nums:', chunk_nums)
 	permuted_chunks = [num_into_permutation(n) for n in chunk_nums]
-	permuted_chunks = [[c + 0 for c in chunk] for chunk in permuted_chunks]
+	permuted_chunks = [[c + noise_cutoff for c in chunk] for chunk in permuted_chunks]
 	print('permuted_chunks:', permuted_chunks)
 	return permuted_chunks
 
