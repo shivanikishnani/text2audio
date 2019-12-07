@@ -22,7 +22,11 @@ d = 0.1
 middle = (lowest + highest) / 2
 spread = middle - lowest
 
-message_size = int(np.log2(comb(total_freqs, k_peaks)))
+total_freqs = 33
+k_peaks = 4
+modality = 3 # number of peaks actually seen on the PSD per peak sent
+
+message_size = int(np.ceil(np.log2(comb(total_freqs, k_peaks))))
 
 def start_sending():
     '''
