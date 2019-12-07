@@ -5,7 +5,7 @@ from encoder import *
 from scipy import signal
 from matplotlib import pyplot as plt
 from utils import *
-from decode_k import decode
+from decode_k import decode, five_to_letter
 
 def read_from_stream(stream, time):
     frames = []
@@ -82,6 +82,13 @@ def get_windowed_psd(waveform):
     
     return f, psds
 
+def convert_to_str(bitstr):
+    # 5 for each char
+    message = ""
+    for i in range(0, len(bitstr), 5):
+        message += five_to_letter(bitstr[i: i + 5])
+    return message
+
 def listen_and_decode(listen_time):
     listen_stream, listen_audio = start_listening()
     ambient_time = read_from_stream(listen_stream, d/2)
@@ -97,7 +104,16 @@ def listen_and_decode(listen_time):
         plt.semilogy(f[np.abs(f - middle) <= spread], p[np.abs(f - middle) <= spread])
         plt.show()
 
-    return ''.join([decode(p) for p in psds])
+    full_bit_msg = ''.join([decode(p) for p in psds])
+    full_str_msg = convert_to_str(full_bit_msg)
+    return full_str_msg
+
+def temp_func(psds):
+    full_bit_msg = ''.join([decode(p) for p in psds])
+    print("final bit message:", full_bit_msg)
+    full_str_msg = convert_to_str(full_bit_msg)
+    print("final message:" , full_str_msg)
 
 if __name__ == "__main__":
     print(listen_and_decode(1))
+    # temp_func([[27, 30, 31, 32], [18, 23, 28, 32]])

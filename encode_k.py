@@ -15,10 +15,7 @@ messages (str) -> (str2str) windowed messages ->  (str2str) bits ->
 
 # total_freqs = 30
 # k_peaks = 6
-# time_interval = 0.2 
-
-
-
+# time_interval = 0.2
 
 def window_an_array(message_list, trip_window=3, windowing=True):
 	final_list = [[0]*5] * 2
@@ -56,7 +53,7 @@ def window_str(message, window_size=3, windowing=True):
 	final_message = ""
 
 	if not windowing:
-		window_size = 1
+		return message
 	else: 
 		message = "00" + message
 		length += 2
@@ -130,7 +127,7 @@ def choose(n, r):
 
 def convert_bitstr_to_num(str):
 	lst = [eval(c) for c in str]
-	l = message_size
+	l = message_size - 1
 	num = 0
 	for i, c in enumerate(lst):
 		num += 2**(l - i) * c
@@ -155,14 +152,22 @@ def encode_peaks(message):
 
 	window_message = window_str(clean(message), windowing=False)
 	window_bits = "".join([char_to_bin(c) for c in window_message])
+	print(window_bits)
 	#divide it into chunks
-	pad = len(window_bits) % message_size
+	print('message size: ', message_size)
+	pad = 0
+	if len(window_bits) % message_size:
+		pad = message_size - (len(window_bits) % message_size)
 	window_bits = "0" * pad + window_bits
+	print('padded:', window_bits)
 	chunk_bits = [window_bits[i:i+message_size] for i in range(0, len(window_bits), message_size)]
-	chunk_bits = ["0" * (message_size - len(chunk)) + chunk for chunk in chunk_bits]
+	print('chunk_bits', chunk_bits)
+	# chunk_bits = ["0" * (message_size - len(chunk)) + chunk for chunk in chunk_bits]
+	# print('chunk_bits', chunk_bits)
 
-	chunk_bits_in_n = [convert_bitstr_to_num(chunk) for chunk in chunk_bits]
-	permuted_chunks = [num_into_permutation(n) for n in chunk_bits_in_n]
+	chunk_nums = [convert_bitstr_to_num(chunk) for chunk in chunk_bits]
+	print('chunk_nums:', chunk_nums)
+	permuted_chunks = [num_into_permutation(n) for n in chunk_nums]
 
 	return permuted_chunks
 
@@ -179,9 +184,10 @@ def get_sound_to_play(chunk):
 
 	return sound
 
-# if __name__ == "__main__":
-# 	chunks = encode_peaks("abcabc")
-# 	for chunk in chunks:
-# 		plt.plot(get_sound_to_play(chunk))
-# 		plt.show()
+if __name__ == "__main__":
+	chunks = encode_peaks("eabc")
+	print(chunks)
+	# for chunk in chunks:
+	# 	plt.plot(get_sound_to_play(chunk))
+	# 	plt.show()
 
