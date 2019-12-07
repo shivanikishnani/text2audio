@@ -163,8 +163,7 @@ def encode_peaks(message):
 
 	chunk_bits_in_n = [convert_bitstr_to_num(chunk) for chunk in chunk_bits]
 	permuted_chunks = [num_into_permutation(n) for n in chunk_bits_in_n]
-	# print(chunk_bits_in_n)
-	# print(permuted_chunks)
+
 	return permuted_chunks
 
 
@@ -180,9 +179,9 @@ def get_sound_to_play(chunk):
 
 	return sound
 
-if __name__ == "__main__":
-	chunks = encode_peaks("abcabc")
-	for chunk in chunks:
-		plt.plot(get_sound_to_play(chunk))
-		plt.show()
+# if __name__ == "__main__":
+# 	chunks = encode_peaks("abcabc")
+# 	for chunk in chunks:
+# 		plt.plot(get_sound_to_play(chunk))
+# 		plt.show()
 

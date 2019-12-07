@@ -3,7 +3,7 @@
 import pyaudio
 import wave
 import numpy as np
-from coder import *
+from encode_k import *
 from time import sleep
 from matplotlib import pyplot as plt
 from scipy import signal
@@ -24,19 +24,12 @@ def get_message_to_play(message, window):
     Takes in a text message and returns the chunk to play.
     Some inspiration from https://davywybiral.blogspot.com/2010/09/procedural-music-with-pyaudio-and-numpy.html
     '''
-    encoded = encode(message)
-    duration = 0
-    last_f, next_f = 0, 0
-    chunks = []
-    for i in range(len(encoded)):
-        f, d = encoded[i]
-        if window and i < len(encoded) - 1:
-            next_f = encoded[i + 1][0]
-        if window and i > 0:
-            last_f = encoded[i - 1][0]
-        chunks.append(get_chunk_for_freqs([last_f, f, next_f], d))
+    permuted_chunks = encode_peaks(message) #list of peak arrays 
+    chunks_to_play = []
+    for p in permuted_chunks:
+        chunks_to_play.append(get_sound_to_play(p))
 
-    return np.concatenate(chunks)
+    return np.concatenate(chunks_to_play)
 
 def play(message, stream, window=False):
     '''
@@ -58,4 +51,8 @@ def show_expected_psd(char):
 
 def play_alphabet(stream):
     return play("abcdefghijklmnopqrstuvwxyz. ", stream)
-    
+
+if __name__ == "__main__":
+    stream, audio = start_sending()
+    play_alphabet(stream)
+    stop_sending(stream, audio)    
