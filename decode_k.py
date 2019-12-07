@@ -179,7 +179,7 @@ def decode(psd_array):
 	decode psd_array for 1 time step thing at a time
 	return bitstr is always of length message_size
 	"""
-	peaks = get_peaks(psd_array) - 10
+	peaks = [peak - 10 for peak in get_peaks(psd_array)]
 	chunk_num = int(permutation_into_num(peaks))
 	print("peaks: ", peaks)
 	print('chunk_num:', chunk_num)
