@@ -173,7 +173,7 @@ def get_sound_to_play(chunk):
 	sound = np.zeros(int(RATE * d),)
 	for peak in chunk:
 		f = lowest + step * peak
-		sound[pop:] += band_sine(f, step / 2)[pop:]
+		sound[pop:] += band_sine(f, step / 4)[pop:]
 
 	return sound
 
