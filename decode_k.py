@@ -123,6 +123,7 @@ def decode(psd_array):
 	"""
 	peaks = get_peaks(psd_array)
 	chunk_num = int(permutation_into_num(peaks))
+	print("peaks: ", peaks)
 	print('chunk_num:', chunk_num)
 	bitstr = convert_num_to_bits(chunk_num)
 	print('bitstr:', bitstr)
