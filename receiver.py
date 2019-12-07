@@ -96,6 +96,7 @@ def listen_and_decode(listen_time):
     f = f[np.abs(f - middle) <= spread]
     full_bit_msg = ''.join([decode(p) for p in psds])
     full_str_msg = convert_to_str(full_bit_msg)
+    print("FULL STR MESSGE:", full_str_msg)
     return full_str_msg
 
 def temp_func(psds):
