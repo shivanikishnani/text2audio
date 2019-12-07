@@ -152,9 +152,12 @@ def encode_peaks(message):
 	onvert message to bits 
 	find floor fo log_2 (k)
 	'''
+
 	window_message = window_str(clean(message), windowing=False)
 	window_bits = "".join([char_to_bin(c) for c in window_message])
 	#divide it into chunks
+	pad = len(window_bits) % message_size
+	window_bits = "0" * pad + window_bits
 	chunk_bits = [window_bits[i:i+message_size] for i in range(0, len(window_bits), message_size)]
 	chunk_bits = ["0" * (message_size - len(chunk)) + chunk for chunk in chunk_bits]
 
