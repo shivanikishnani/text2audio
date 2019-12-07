@@ -13,7 +13,7 @@ def get_peaks(psd_array):
 	Array that returns the number of peaks in pst_array not in the same freq_window or wtv
 	k peaks in those time intervals
 	"""
-	num_peaks = 2 * k_peaks
+	num_peaks = 3 * k_peaks
 	max_psd = 0.25 * max(psd_array)
 	distance = step // 5
 	ind_peaks_in_psd, _ = find_peaks(psd_array, distance=distance, height=max_psd) #indices
