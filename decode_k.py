@@ -13,26 +13,66 @@ def get_peaks(psd_array):
 	Array that returns the number of peaks in pst_array not in the same freq_window or wtv
 	k peaks in those time intervals
 	"""
-	# max_psd = 0.1 * max(psd_arr)
-	ind_peaks_in_psd, _ = find_peaks(psd_array, distance=step//2) #indices
-	peaks_in_psd = psd_array[ind_peaks_in_psd]
+	num_peaks = 2 * k_peaks
+	max_psd = 0.25 * max(psd_array)
+	distance = step // 5
+	ind_peaks_in_psd, _ = find_peaks(psd_array, distance=step//5, height=max_psd) #indices
+	ind_peaks_in_psd = np.sort(ind_peaks_in_psd)[::-1]
+	
+	ind_peaks_in_psd = ind_peaks_in_psd[0:num_peaks]
+	length = len(ind_peaks_in_psd)
 
-	#now we want to sort peaks_in_psd
-
-	sorted_ind_peaks_in_psd = np.argsort(peaks_in_psd)
-	return sorted_ind_peaks_in_psd
+	while (length < num_peaks):
+		ind_peaks_in_psd, _ = find_peaks(psd_array, distance=step//5, height=max_psd) #indices
+		
+	print(ind_peaks_in_psd)
+	# if len(ind_peaks_in_psd) == 6:
+	# 	ind_peaks_in_psd = 
+	return ind_peaks_in_psd
 	# psd_peaks_sorted = np.sort(psd_array[peaks_in_psd], axis=-1)[::-1]
 
-	# peaks = [np.where(psd_array == psd_peaks_sorted[i]) for i in range(k_peaks)]
-	# return peaks
+	# ok so you do +5 // 10 and if you have something that is v close (for example 255 235) 
+	# then you should subtract -5 from 255 since the distance thing might affect that
+	#  this happens when you have chunks that are separated by 1
+def test_get_peaks():
+	
+	'''
+	Takes in a message and plots the first 'threshold' PSDs we expect to get from hearing it.
+	'''
+	threshold=5
+	# permuted_chunks = encode_peaks("abc")
+	# permuted_chunks = encode_peaks("abd")
+	# permuted_chunks = encode_peaks("cbd")
+	# permuted_chunks = encode_peaks("fck")
+	# permuted_chunks = encode_peaks("ghk")
+	permuted_chunks = encode_peaks("xxx")
+	permuted_chunks = [[18, 19, 20, 21]]
+	print(permuted_chunks)
+	sounds = []
+	for chunk in permuted_chunks:
+		sounds.append(get_sound_to_play(chunk))
+
+	
+	for i in range(min(threshold, len(sounds))):
+		freqs, power = np.fft.fftfreq(sounds[i].shape[-1], d=1/RATE), np.abs(np.fft.fft(sounds[i])) ** 2
+		f, p = np.fft.fftshift(freqs), np.fft.fftshift(power)
+		p = p[np.abs(f - middle) <= spread]
+		f = f[np.abs(f - middle) <= spread]
+		peak_powers = np.sort(p[find_peaks(p)[0]])[::-1]
+
+	# print("ACTUAL PSD ARRAY:", p)
+	get_peaks(p)
+		# print([f[np.where(p == peak_powers[i])][0] for i in range(4)])
+		# plt.semilogy(f, p)
+		# plt.show()
 
 def permutation_into_num(loc_array):
-    loc_array = np.sort(loc_array, axis=-1)
-    F = total_freqs
-    total = 0
-    for i in range(len(loc_array)):
-        total += choose(F - loc_array[i] - 1, len(loc_array) - i)
-    return total
+	loc_array = np.sort(loc_array, axis=-1)
+	F = total_freqs
+	total = 0
+	for i in range(len(loc_array)):
+		total += choose(F - loc_array[i] - 1, len(loc_array) - i)
+	return total
 
 """
 process_sound_from_stream is the only function that should be used by other files
@@ -142,5 +182,6 @@ def decode(psd_array):
 	return bitstr
 
 if __name__ == "__main__":
-	print(decode([]))
+	# print(decode([]))
+	test_get_peaks()
 

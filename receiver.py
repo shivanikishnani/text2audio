@@ -85,12 +85,14 @@ def listen_and_decode(listen_time):
     middle = (lowest + highest) / 2
     spread = middle - lowest
 
-    ambient_power = ambient_power[np.abs(f - middle) <= spread]
+    ambient_power = ambient_power[np.abs(f - middle) <= spread] * 0
     
     for i, p in enumerate(psds):
         psds[i] = p[np.abs(f - middle) <= spread]
         psds[i] -= ambient_power
         plt.semilogy(f[np.abs(f - middle) <= spread], psds[i])
+        if i == 0:
+            plt.show()
         
     f = f[np.abs(f - middle) <= spread]
     full_bit_msg = ''.join([decode(p) for p in psds])

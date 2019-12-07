@@ -26,6 +26,7 @@ def get_message_to_play(message, window):
     Takes in a text message and returns the chunk to play.
     Some inspiration from https://davywybiral.blogspot.com/2010/09/procedural-music-with-pyaudio-and-numpy.html
     '''
+    pdb.set_trace()
     permuted_chunks = encode_peaks(message) #list of peak arrays 
     chunks_to_play = []
     for p in permuted_chunks:
