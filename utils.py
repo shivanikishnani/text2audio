@@ -8,9 +8,9 @@ RATE = 44100
 CHUNK = 1000
 pop = 1000 # number of timesteps to reject initially to avoid pops
 
-lowest = 200
-highest = 900
-step = 20
+lowest = 209.475
+highest = 893.025
+step = 10.025 * 2
 d = 0.2
 
 total_freqs = 33

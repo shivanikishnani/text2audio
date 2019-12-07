@@ -119,5 +119,5 @@ def temp_func(psds):
     print("final message:" , full_str_msg)
 
 if __name__ == "__main__":
-    print(listen_and_decode(1))
+    print(listen_and_decode(5))
     # temp_func([[27, 30, 31, 32], [18, 23, 28, 32]])

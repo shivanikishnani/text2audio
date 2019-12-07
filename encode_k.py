@@ -171,8 +171,6 @@ def encode_peaks(message):
 
 	return permuted_chunks
 
-
-
 def get_sound_to_play(chunk):
 	'''
 	Takes in a chunk from chunk_bits, and returns the sound to play.
