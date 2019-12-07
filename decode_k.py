@@ -8,14 +8,23 @@ from scipy.signal import find_peaks
 from encode_k import *
 from utils import *
 
-def get_peaks(psd_arr):
+def get_peaks(psd_array):
 	"""
 	Array that returns the number of peaks in pst_array not in the same freq_window or wtv
 	k peaks in those time intervals
 	"""
-	max_psd = 0.25 * max(psd_arr)
-	peaks_in_psd, _ = find_peaks(psd_arr, height=max_psd, distance=step) #indices
-	return peaks_in_psd
+	# max_psd = 0.1 * max(psd_arr)
+	ind_peaks_in_psd, _ = find_peaks(psd_array, distance=step//2) #indices
+	peaks_in_psd = psd_array[ind_peaks_in_psd]
+
+	#now we want to sort peaks_in_psd
+
+	sorted_ind_peaks_in_psd = np.argsort(peaks_in_psd)
+	return sorted_ind_peaks_in_psd
+	# psd_peaks_sorted = np.sort(psd_array[peaks_in_psd], axis=-1)[::-1]
+
+	# peaks = [np.where(psd_array == psd_peaks_sorted[i]) for i in range(k_peaks)]
+	# return peaks
 
 def permutation_into_num(loc_array):
     loc_array = np.sort(loc_array, axis=-1)

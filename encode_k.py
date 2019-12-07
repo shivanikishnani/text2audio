@@ -183,7 +183,9 @@ def get_sound_to_play(chunk):
 	return sound
 
 if __name__ == "__main__":
-	chunks = encode_peaks("eabc")
+	chunks = encode_peaks("abc")
+	print(chunks)
+	chunks = encode_peaks("abd")
 	print(chunks)
 	# for chunk in chunks:
 	# 	plt.plot(get_sound_to_play(chunk))
