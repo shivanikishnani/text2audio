@@ -4,14 +4,14 @@ from scipy.special import comb
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
-RATE = 44100
+RATE = 40000
 CHUNK = 1000
-pop = 1000 # number of timesteps to reject initially to avoid pops
+pop = 0 # number of timesteps to reject initially to avoid pops
 
 lowest = 200
 highest = 1950
 step = 50
-d = 0.2
+d = 0.1
 
 middle = (lowest + highest) / 2
 spread = middle - lowest

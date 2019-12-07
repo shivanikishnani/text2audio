@@ -54,7 +54,7 @@ def get_windowed_psd(waveform):
         waveform = np.load(waveform)
 
     heard_list = []
-    num_windows = int((sum(len(w) for w in waveform) / RATE) / d)
+    num_windows = int(len(waveform) / (RATE * d))
     k = len(waveform) // num_windows
 
     for i in range(num_windows):
@@ -64,7 +64,14 @@ def get_windowed_psd(waveform):
     for i, heard in enumerate(heard_list):
         f, p = get_psd(heard)
         psds.append(p)
+
+    # resampling
+
+    f_desired = np.fft.fftfreq(int(RATE * d), d = 1 / RATE)
+    f_desired = f_desired[np.abs(f_desired - middle) <= spread]
     
+    print(max(np.diff(f)), max(np.diff(f_desired)))
+
     return f, psds
 
 def convert_to_str(bitstr):
@@ -76,20 +83,16 @@ def convert_to_str(bitstr):
 
 def listen_and_decode(listen_time):
     listen_stream, listen_audio = start_listening()
-    ambient_time = read_from_stream(listen_stream, d/2)
-    ambient_freqs, ambient_power = get_psd(ambient_time)
     frames = read_from_stream(listen_stream, listen_time)
     stop_listening(listen_stream, listen_audio)
 
-    f, psds = get_windowed_psd(frames)
+    heard = get_waveform(frames)
+    f, psds = get_windowed_psd(heard)
     middle = (lowest + highest) / 2
     spread = middle - lowest
-
-    ambient_power = ambient_power[np.abs(f - middle) <= spread]
     
     for i, p in enumerate(psds):
         psds[i] = p[np.abs(f - middle) <= spread]
-        psds[i] -= ambient_power
         plt.semilogy(f[np.abs(f - middle) <= spread], psds[i])
         
     f = f[np.abs(f - middle) <= spread]
@@ -104,5 +107,5 @@ def temp_func(psds):
     print("final message:" , full_str_msg)
 
 if __name__ == "__main__":
-    print(listen_and_decode(5))
+    print(listen_and_decode(0.1))
     # temp_func([[27, 30, 31, 32], [18, 23, 28, 32]])
