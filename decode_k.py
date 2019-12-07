@@ -22,20 +22,23 @@ def get_peaks(psd_array):
 	ind_peaks_in_psd = ind_peaks_in_psd[0:num_peaks]
 	length = len(ind_peaks_in_psd)
 
-	print('\n\n\n')
+	print('\n')
 	num_times = 0
-	while (length < num_peaks):
+	while (length < num_peaks) and num_times < 10:
 		max_psd = max_psd * 0.95
 		ind_peaks_in_psd, _ = find_peaks(psd_array, height=max_psd) #indices
 		ind_peaks_in_psd = np.sort(ind_peaks_in_psd)[::-1]
 		ind_peaks_in_psd = ind_peaks_in_psd[0:num_peaks]
-		length = len(ind_peaks_in_psd)
+		result = [int(round(ind/5)) for ind in ind_peaks_in_psd]
+		length = len(set(result))
 		# print("here here here ")
 		# print(ind_peaks_in_psd)
 		num_times += 1
 
-	if num_times >= 5 and len(set(ind_peaks_in_psd)) < 4:
+
+	if num_times >= 10: 
 		return []
+
 
 	# if len(ind_peaks_in_psd) == 6:
 	# 	ind_peaks_in_psd = 

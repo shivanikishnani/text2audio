@@ -12,7 +12,7 @@ noise_cutoff = 0
 total_freqs = 33 - noise_cutoff
 
 k_peaks = 4
-modality = 3 # number of peaks actually seen on the PSD per peak sent
+modality = 1 # number of peaks actually seen on the PSD per peak sent
 
 lowest = 200
 step = 50
@@ -26,7 +26,7 @@ total_freqs = 33
 k_peaks = 4
 modality = 3 # number of peaks actually seen on the PSD per peak sent
 
-message_size = int(np.ceil(np.log2(comb(total_freqs, k_peaks))))
+message_size = int(np.floor(np.log2(comb(total_freqs, k_peaks))))
 
 def start_sending():
     '''
