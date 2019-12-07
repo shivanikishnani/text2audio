@@ -22,14 +22,20 @@ def get_peaks(psd_array):
 	ind_peaks_in_psd = ind_peaks_in_psd[0:num_peaks]
 	length = len(ind_peaks_in_psd)
 
+	print('\n\n\n')
+	num_times = 0
 	while (length < num_peaks):
 		max_psd = max_psd * 0.95
 		ind_peaks_in_psd, _ = find_peaks(psd_array, height=max_psd) #indices
 		ind_peaks_in_psd = np.sort(ind_peaks_in_psd)[::-1]
 		ind_peaks_in_psd = ind_peaks_in_psd[0:num_peaks]
 		length = len(ind_peaks_in_psd)
+		# print("here here here ")
 		# print(ind_peaks_in_psd)
+		num_times += 1
 
+	if num_times >= 5 and len(set(ind_peaks_in_psd)) < 4:
+		return []
 
 	# if len(ind_peaks_in_psd) == 6:
 	# 	ind_peaks_in_psd = 
@@ -48,14 +54,14 @@ def test_get_peaks():
 	'''
 	Takes in a message and plots the first 'threshold' PSDs we expect to get from hearing it.
 	'''
-	threshold=5
+	threshold = 5
 	# permuted_chunks = encode_peaks("abc")
 	# permuted_chunks = encode_peaks("abd")
 	# permuted_chunks = encode_peaks("cbd")
 	# permuted_chunks = encode_peaks("fck")
-	permuted_chunks = encode_peaks("ghk")
+	# permuted_chunks = encode_peaks("ghk")
 	# permuted_chunks = encode_peaks("xxx")
-	# permuted_chunks = [[18, 19, 20, 21]]
+	permuted_chunks = [[1, 2, 3, 4]]
 	print(permuted_chunks)
 	sounds = []
 	for chunk in permuted_chunks:
@@ -74,6 +80,12 @@ def test_get_peaks():
 		# print([f[np.where(p == peak_powers[i])][0] for i in range(4)])
 		plt.semilogy(f, p)
 		plt.show()
+
+def choose(n, r):
+	if(r > n):
+		return 0
+	fact = math.factorial
+	return (fact(n)) // (fact(r)*fact(n - r))
 
 def permutation_into_num(loc_array):
 	loc_array = np.sort(loc_array, axis=-1)
@@ -171,6 +183,8 @@ def convert_num_to_bits(chunk_num):
 	returns bit str of length message_size
 	"""
 	bin_str = str(np.binary_repr(chunk_num))
+	if (len(bin_str) > message_size):
+		print("ERROR")
 	bin_str = '0' * (message_size - len(bin_str)) + bin_str
 	return bin_str
 
@@ -180,9 +194,12 @@ def decode(psd_array):
 	return bitstr is always of length message_size
 	"""
 	peaks = [peak + 0 for peak in get_peaks(psd_array)]
-	negative = [p < 0 for p in peaks]
-	if any(negative):
-		return ''
+	if len(peaks) == 0:
+		return "0" * message_size
+	# negative = [p < 0 for p in peaks]
+	# if any(negative):
+	# 	return '
+	# peaks = [1, 2, 3, 4]
 	chunk_num = int(permutation_into_num(peaks))
 	print("peaks: ", peaks)
 	print('chunk_num:', chunk_num)
