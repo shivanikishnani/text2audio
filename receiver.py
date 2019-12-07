@@ -4,36 +4,14 @@ import numpy as np
 from encoder import *
 from scipy import signal
 from matplotlib import pyplot as plt
-from coder import *
 from utils import *
+from decode_k import decode
 
 def read_from_stream(stream, time):
     frames = []
     for _ in range(int(RATE / CHUNK * time)):
         data = stream.read(CHUNK, exception_on_overflow = False)
         frames.append(data)
-
-    return frames
-
-def listen(listening_time=10, filename=None):
-    '''
-    Listen for listening_time (float) seconds and return the bit representation of the output.
-    Optionally, for debugging, write it to filename.
-    Don't run this in a while loop! start_listening creates a bit of noise at the start that I can't get rid of, so call it once for each time you actually want to start listening, not just to window out small intervals at a time.
-    Modified from source https://gist.github.com/mabdrabo/8678538
-    '''
-
-    stream, audio = start_listening()
-    frames = read_from_stream(stream, listening_time)
-    stop_listening(stream, audio)
-    
-    if filename is not None:
-        waveFile = wave.open(filename, 'wb')
-        waveFile.setnchannels(CHANNELS)
-        waveFile.setsampwidth(audio.get_sample_size(FORMAT))
-        waveFile.setframerate(RATE)
-        waveFile.writeframes(b''.join(frames))
-        waveFile.close()
 
     return frames
 
@@ -44,7 +22,6 @@ def get_waveform(frames):
     cleaned_frames = [np.frombuffer(frame, dtype=np.int16) for frame in frames]
     frame = np.hstack(cleaned_frames)
     return frame
-
 
 def get_psd(frames):
     '''
@@ -87,32 +64,16 @@ def nth_bit(n, freqs, powers):
             bit = '0'
     return bit
 
-def decode_frame(frame):
-    '''
-    Takes in a frame and returns its decoded character.
-    '''
-    return decode(get_frequencies(frame))
-
-def decode_framesets(framesets):
-    '''
-    Takes in a list of frames and returns its decoding.
-    '''
-    chars = []
-    for frame in framesets:
-        chars.append(decode_frame(frame))
-
-    return ''.join(chars)
-
-def get_windowed_psd(waveform, d=0.1):
+def get_windowed_psd(waveform):
     if isinstance(waveform, str):
         waveform = np.load(waveform)
 
     heard_list = []
-    num_windows = int((len(waveform) / RATE) / d)
+    num_windows = int((sum(len(w) for w in waveform) / RATE) / d)
     k = len(waveform) // num_windows
 
     for i in range(num_windows):
-        heard_list.append(waveform[k * i: k * (i + 1)])
+        heard_list.append(get_waveform(waveform[k * i: k * (i + 1)]))
 
     psds = []
     for i, heard in enumerate(heard_list):
@@ -121,22 +82,16 @@ def get_windowed_psd(waveform, d=0.1):
     
     return f, psds
 
-if __name__ == "__main__":
-    d = 0.1
-    listen_time = 20
+def listen_and_decode(listen_time):
     listen_stream, listen_audio = start_listening()
     ambient_time = read_from_stream(listen_stream, d)
     ambient_freqs, ambient_power = get_psd(ambient_time)
     frames = read_from_stream(listen_stream, listen_time)
     stop_listening(listen_stream, listen_audio)
-    
-    num_frames = int(listen_time / d)
-    k = len(frames) // num_frames
 
-    heard_list = []
-    for i in range(num_frames):
-        heard_list.append(frames[k * i: k * (i + 1)])
+    f, psds = get_windowed_psd(frames)
 
-    plt.plot(get_waveform(frames))
-    plt.show()
-    np.save('./fifty_frame_today.npy', get_waveform(frames))
+    return ''.join([decode(p) for p in psds])
+
+if __name__ == "__main__":
+    print(listen_and_decode(1))

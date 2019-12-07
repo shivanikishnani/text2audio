@@ -8,24 +8,22 @@ from scipy.signal import find_peaks
 from encode_k import *
 from utils import *
 
-
-def get_peaks(psd_arr, freq_array):
+def get_peaks(psd_arr):
 	"""
 	Array that returns the number of peaks in pst_array not in the same freq_window or wtv
 	k peaks in those time intervals
 	"""
-	max_psd = 0.25 * max(psd_array)
-
-	peaks_in_psd = find_peaks(psd_array, height=max_psd, distance=step) #indices
+	max_psd = 0.25 * max(psd_arr)
+	peaks_in_psd = find_peaks(psd_arr, height=max_psd, distance=step) #indices
 	return peaks_in_psd
 
 def permutation_into_num(loc_array):
-	F = total_freqs
+    loc_array = np.sort(loc_array[0])
+    F = total_freqs
     total = 0
     for i in range(len(loc_array)):
         total += choose(F - loc_array[i] - 1, len(loc_array) - i)
     return total
-
 
 
 #process_sound_from_stream is the only function that should be used by other files
@@ -133,7 +131,7 @@ def decode(psd_array):
 	"""
 	decode psd_array for 1 time step thing at a time
 	"""
-	peaks = get_peaks(psd_array, freq_array)
+	peaks = get_peaks(psd_array)
 	chunk_num = permutation_into_num(peaks)
 	bitstr = convert_num_to_bits(chunk_num)
 	#tell aditya to concatenate all these bitstrs and then convert to message
