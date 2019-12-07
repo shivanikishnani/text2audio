@@ -12,15 +12,6 @@ from utils import *
 from copy import deepcopy
 from scipy.signal import find_peaks
 
-def harmonics1(freq, length):
-  a = sine(freq * 1.00, length)
-  b = sine(freq * 2.00, length)
-  c = sine(freq * 4.00, length)
-  return (a + b + c) * 0.2
-
-def get_chunk_for_freqs(freqs, d):
-    return sum([harmonics1(f, d) for f in freqs]) / 3
-
 def get_message_to_play(message, window):
     '''
     Takes in a text message and returns the chunk to play.
@@ -52,20 +43,19 @@ def show_expected_psds(message, threshold=5):
 
     for i in range(min(threshold, len(sounds))):
         freqs, power = np.fft.fftfreq(sounds[i].shape[-1], d=1/RATE), np.abs(np.fft.fft(sounds[i])) ** 2
+
         f, p = np.fft.fftshift(freqs), np.fft.fftshift(power)
         p = p[np.abs(f - middle) <= spread]
         f = f[np.abs(f - middle) <= spread]
-        peak_powers = np.sort(p[find_peaks(p)[0]])[::-1]
-        print([f[np.where(p == peak_powers[i])][0] for i in range(4)])
-        plt.semilogy(f, p)
-        plt.show()
+        np.save('./psd_abc.npy', p)
+        np.save('./freqs_abc.npy', f)
         
 
 def play_alphabet(stream):
-    return play("abcdefghijklmnopqrstuvwxyz. " * 3, stream)
+    return play("abc" * 10, stream)
 
 if __name__ == "__main__":
     stream, audio = start_sending()
-    play_alphabet(stream)
+    # play_alphabet(stream)
     stop_sending(stream, audio)    
-    # show_expected_psds('abc')
+    show_expected_psds('abc')

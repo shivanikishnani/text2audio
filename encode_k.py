@@ -13,10 +13,6 @@ messages (str) -> (str2str) windowed messages ->  (str2str) bits ->
  -> (str_2array) an array of peaks locations corresponding to each chunk
 """ 
 
-# total_freqs = 30
-# k_peaks = 6
-# time_interval = 0.2
-
 def window_an_array(message_list, trip_window=3, windowing=True):
 	final_list = [[0]*5] * 2
 	length = len(message_list) 
@@ -177,7 +173,6 @@ def get_sound_to_play(chunk):
 	sound = np.zeros(int(RATE * d),)
 	for peak in chunk:
 		f = lowest + step * peak
-		print(peak)
 		sound[pop:] += band_sine(f, step / 2)[pop:]
 
 	return sound
