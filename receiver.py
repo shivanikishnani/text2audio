@@ -84,12 +84,18 @@ def get_windowed_psd(waveform):
 
 def listen_and_decode(listen_time):
     listen_stream, listen_audio = start_listening()
-    ambient_time = read_from_stream(listen_stream, d)
+    ambient_time = read_from_stream(listen_stream, d/2)
     ambient_freqs, ambient_power = get_psd(ambient_time)
     frames = read_from_stream(listen_stream, listen_time)
     stop_listening(listen_stream, listen_audio)
 
     f, psds = get_windowed_psd(frames)
+    middle = (lowest + highest) / 2
+    spread = middle - lowest
+    for p in psds:
+        p -= ambient_power
+        plt.semilogy(f[np.abs(f - middle) <= spread], p[np.abs(f - middle) <= spread])
+        plt.show()
 
     return ''.join([decode(p) for p in psds])
 
