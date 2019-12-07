@@ -163,7 +163,7 @@ def encode_peaks(message):
 	chunk_nums = [convert_bitstr_to_num(chunk) for chunk in chunk_bits]
 	print('chunk_nums:', chunk_nums)
 	permuted_chunks = [num_into_permutation(n) for n in chunk_nums]
-
+	permuted_chunks += 10
 	return permuted_chunks
 
 def get_sound_to_play(chunk):
